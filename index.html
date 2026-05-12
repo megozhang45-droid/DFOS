@@ -3,7 +3,6 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <!-- 新增：SEO 與社群分享 (Open Graph) Meta 標籤 -->
     <meta name="description" content="Edwards Lifesciences - Don't Fear Of Surgery 專案成效報告與互動遊戲。">
     <meta property="og:title" content="Don't Fear Of Surgery | Edwards Lifesciences">
     <meta property="og:description" content="透過數據量化台灣市場治療缺口，並運用情感驅動與社群擴散，打造手術安心指南。">
@@ -11,11 +10,8 @@
     
     <title>Don't Fear Of Surgery - 專案報告與互動遊戲 | Edwards Lifesciences</title>
     
-    <!-- 引入 Tailwind CSS 進行排版 -->
     <script src="https://cdn.tailwindcss.com"></script>
-    <!-- 引入 FontAwesome 圖示 -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
-    <!-- 引入 Google Fonts 手寫風字體 -->
     <link href="https://fonts.googleapis.com/css2?family=Kalam:wght@400;700&family=Noto+Sans+TC:wght@400;700;900&display=swap" rel="stylesheet">
     
     <script>
@@ -24,10 +20,10 @@
                 extend: {
                     colors: {
                         edwards: {
-                            red: '#C8102E',    /* Edwards 品牌紅 */
-                            gray: '#898D8D',   /* Edwards 鈦灰色 */
-                            ink: '#2D3436',    /* 手繪墨水深色 */
-                            paper: '#FDFBF7'   /* 手繪紙張背景 */
+                            red: '#C8102E',    
+                            gray: '#898D8D',   
+                            ink: '#2D3436',    
+                            paper: '#FDFBF7'   
                         }
                     },
                     fontFamily: {
@@ -40,7 +36,6 @@
     </script>
     
     <style>
-        /* ================= 報告版面樣式 ================= */
         body {
             background-color: #FDFBF7;
             background-image: radial-gradient(#d5d0ce 1px, transparent 1px);
@@ -170,7 +165,8 @@
                 <li><a href="#sec-8" class="toc-link block text-[13px] font-bold text-slate-500 hover:text-edwards-red transition-all pl-2 border-l-4 border-transparent hover:border-edwards-red" data-target="sec-8">八、線下整合深耕</a></li>
                 <li><a href="#sec-9" class="toc-link block text-[13px] font-bold text-slate-500 hover:text-edwards-red transition-all pl-2 border-l-4 border-transparent hover:border-edwards-red" data-target="sec-9">九、後續與戰略協作</a></li>
                 <li><a href="#sec-11" class="toc-link block text-[13px] font-bold text-slate-500 hover:text-edwards-red transition-all pl-2 border-l-4 border-transparent hover:border-edwards-red" data-target="sec-11">十一、結語</a></li>
-                <li><a href="game.html" target="_blank" class="block text-[13px] font-bold text-edwards-red mt-2 transition-all pl-2 border-l-4 border-transparent hover:border-edwards-red bg-red-50 p-1 rounded"><i class="fa-solid fa-gamepad mr-1"></i>十二、互動挑戰</a></li>
+                <!-- ★ 注意這裡：改為 ./game.html -->
+                <li><a href="./game.html" class="block text-[13px] font-bold text-edwards-red mt-2 transition-all pl-2 border-l-4 border-transparent hover:border-edwards-red bg-red-50 p-1 rounded"><i class="fa-solid fa-gamepad mr-1"></i>十二、互動挑戰</a></li>
             </ul>
         </div>
     </nav>
@@ -200,7 +196,8 @@
                 <li><a href="#sec-8" class="block font-bold text-slate-600 active:text-edwards-red bg-white p-3 rounded-xl border-2 border-slate-200">八、線下整合深耕</a></li>
                 <li><a href="#sec-9" class="block font-bold text-slate-600 active:text-edwards-red bg-white p-3 rounded-xl border-2 border-slate-200">九、後續與戰略協作</a></li>
                 <li><a href="#sec-11" class="block font-bold text-slate-600 active:text-edwards-red bg-white p-3 rounded-xl border-2 border-slate-200">十一、結語</a></li>
-                <li><a href="game.html" target="_blank" class="block font-bold text-edwards-red active:text-edwards-red bg-red-50 p-3 rounded-xl border-2 border-edwards-red"><i class="fa-solid fa-gamepad mr-2"></i>十二、互動挑戰：全球保衛戰</a></li>
+                <!-- ★ 注意這裡：改為 ./game.html -->
+                <li><a href="./game.html" class="block font-bold text-edwards-red active:text-edwards-red bg-red-50 p-3 rounded-xl border-2 border-edwards-red"><i class="fa-solid fa-gamepad mr-2"></i>十二、互動挑戰：全球保衛戰</a></li>
             </ul>
         </div>
     </div>
@@ -878,7 +875,8 @@
             </h2>
             <p class="text-lg text-slate-600 font-bold mb-8">全球瓣膜保衛戰 - 20秒極限挑戰已獨立開啟新頁面！</p>
             
-            <a href="game.html" target="_blank" class="sketch-btn text-2xl py-4 px-8 animate-bounce inline-flex">
+            <!-- ★ 注意這裡：改為 ./game.html -->
+            <a href="./game.html" class="sketch-btn text-2xl py-4 px-8 animate-bounce inline-flex">
                 <i class="fa-solid fa-bolt mr-3"></i> 立即前往挑戰
             </a>
         </section>
