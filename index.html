@@ -125,7 +125,6 @@
         .no-scrollbar::-webkit-scrollbar { display: none; }
         .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
 
-        /* ================= 遊戲區塊專屬樣式 ================= */
         .sketch-btn {
             display: inline-flex;
             align-items: center;
@@ -145,105 +144,6 @@
         .sketch-btn:active:not(:disabled) {
             transform: translate(2px, 2px);
             box-shadow: 1px 1px 0 #2D3436;
-        }
-        .sketch-btn:disabled {
-            background: #898D8D;
-            cursor: not-allowed;
-            box-shadow: none;
-            transform: translate(2px, 2px);
-        }
-
-        .sketch-input {
-            border: 2px solid #2D3436;
-            border-radius: 10px 20px 10px 20px/20px 10px 20px 10px;
-            padding: 12px 20px;
-            font-family: 'Noto Sans TC', sans-serif;
-            font-weight: 700;
-            font-size: 1.1rem;
-            outline: none;
-            background: #fff;
-            box-shadow: inset 2px 2px 0 rgba(0,0,0,0.05);
-            text-align: center;
-            width: 100%;
-            transition: all 0.2s;
-        }
-        .sketch-input:focus {
-            border-color: #C8102E;
-            box-shadow: inset 2px 2px 0 rgba(200,16,46,0.1);
-        }
-
-        /* 排行榜列樣式 */
-        .rank-row {
-            display: flex;
-            align-items: center;
-            padding: 10px 15px;
-            margin-bottom: 8px;
-            border: 2px dashed #898D8D;
-            border-radius: 10px 20px 10px 20px/20px 10px 20px 10px;
-            background: #fff;
-            transition: all 0.3s;
-        }
-        .rank-row.is-me {
-            border: 2px solid #C8102E;
-            background: #fff8f8;
-            box-shadow: 3px 3px 0 rgba(200, 16, 46, 0.2);
-            transform: scale(1.02);
-            z-index: 10;
-            position: relative;
-        }
-        .rank-badge {
-            width: 30px;
-            height: 30px;
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-weight: 900;
-            margin-right: 12px;
-            font-family: 'Kalam', cursive;
-            flex-shrink: 0;
-        }
-        .rank-1 { background: #FFD700; color: #b8860b; border: 2px solid #b8860b; font-size: 1.2rem;}
-        .rank-2 { background: #E0E0E0; color: #757575; border: 2px solid #9e9e9e; font-size: 1.1rem;}
-        .rank-3 { background: #CD7F32; color: #5d4037; border: 2px solid #8d6e63; font-size: 1rem;}
-        .rank-other { background: #f1f5f9; color: #898D8D; }
-
-        /* 遊戲點擊按鈕 (大心臟) */
-        .valve-core {
-            cursor: pointer;
-            transition: transform 0.05s ease;
-            user-select: none;
-            -webkit-tap-highlight-color: transparent;
-            position: relative;
-        }
-        .valve-core:active {
-            transform: scale(0.92) !important;
-        }
-        
-        @keyframes heartbeat {
-            0%, 100% { transform: scale(1); }
-            15% { transform: scale(1.05); }
-            30% { transform: scale(1); }
-            45% { transform: scale(1.05); }
-        }
-        .animate-heartbeat {
-            animation: heartbeat 2s infinite;
-        }
-
-        @keyframes float-up-fade {
-            0% { opacity: 1; transform: translateY(0) scale(1) rotate(0deg); }
-            100% { opacity: 0; transform: translateY(-100px) scale(1.5) rotate(15deg); }
-        }
-        .particle-score {
-            position: absolute;
-            color: #C8102E;
-            font-family: 'Kalam', cursive;
-            font-weight: bold;
-            font-size: 1.5rem;
-            pointer-events: none;
-            animation: float-up-fade 0.8s ease-out forwards;
-            text-shadow: 2px 2px 0 #fff;
-            z-index: 50;
         }
     </style>
 </head>
