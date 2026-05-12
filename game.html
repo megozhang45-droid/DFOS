@@ -1,0 +1,616 @@
+<!DOCTYPE html>
+<html lang="zh-TW" class="scroll-smooth h-full">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Global Valve Defender | Edwards Lifesciences</title>
+    
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Kalam:wght@400;700&family=Noto+Sans+TC:wght@400;700;900&display=swap" rel="stylesheet">
+    
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        edwards: {
+                            red: '#C8102E',
+                            gray: '#898D8D',
+                            ink: '#2D3436',
+                            paper: '#FDFBF7'
+                        }
+                    },
+                    fontFamily: {
+                        sans: ['Noto Sans TC', 'sans-serif'],
+                        hand: ['Kalam', 'Noto Sans TC', 'cursive'],
+                    }
+                }
+            }
+        }
+    </script>
+    
+    <style>
+        body {
+            background-color: #FDFBF7;
+            background-image: radial-gradient(#d5d0ce 1px, transparent 1px);
+            background-size: 20px 20px;
+            color: #2D3436;
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+        }
+
+        h1, h2, h3, .hand-font { font-family: 'Kalam', 'Noto Sans TC', cursive; }
+
+        .sketch-box {
+            background: #fff;
+            border: 3px solid #2D3436;
+            border-radius: 255px 15px 225px 15px/15px 225px 15px 255px;
+            padding: 30px;
+            box-shadow: 6px 6px 0 rgba(200, 16, 46, 0.15);
+            transition: all 0.3s ease;
+            position: relative;
+        }
+
+        .sketch-btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            background: #C8102E;
+            color: #fff !important;
+            border: 2px solid #2D3436;
+            border-radius: 15px 225px 15px 255px/255px 15px 225px 15px;
+            padding: 12px 24px;
+            font-weight: 700;
+            box-shadow: 3px 3px 0 #2D3436;
+            transition: all 0.1s ease;
+            cursor: pointer;
+            font-family: 'Kalam', 'Noto Sans TC', cursive;
+            user-select: none;
+            text-decoration: none;
+        }
+        .sketch-btn:active:not(:disabled) {
+            transform: translate(2px, 2px);
+            box-shadow: 1px 1px 0 #2D3436;
+        }
+        .sketch-btn:disabled {
+            background: #898D8D;
+            cursor: not-allowed;
+            box-shadow: none;
+            transform: translate(2px, 2px);
+        }
+
+        .sketch-input {
+            border: 2px solid #2D3436;
+            border-radius: 10px 20px 10px 20px/20px 10px 20px 10px;
+            padding: 12px 20px;
+            font-family: 'Noto Sans TC', sans-serif;
+            font-weight: 700;
+            font-size: 1.1rem;
+            outline: none;
+            background: #fff;
+            box-shadow: inset 2px 2px 0 rgba(0,0,0,0.05);
+            text-align: center;
+            width: 100%;
+            transition: all 0.2s;
+        }
+        .sketch-input:focus {
+            border-color: #C8102E;
+            box-shadow: inset 2px 2px 0 rgba(200,16,46,0.1);
+        }
+
+        .rank-row {
+            display: flex;
+            align-items: center;
+            padding: 10px 15px;
+            margin-bottom: 8px;
+            border: 2px dashed #898D8D;
+            border-radius: 10px 20px 10px 20px/20px 10px 20px 10px;
+            background: #fff;
+            transition: all 0.3s;
+        }
+        .rank-row.is-me {
+            border: 2px solid #C8102E;
+            background: #fff8f8;
+            box-shadow: 3px 3px 0 rgba(200, 16, 46, 0.2);
+            transform: scale(1.02);
+            z-index: 10;
+            position: relative;
+        }
+        .rank-badge {
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 900;
+            margin-right: 12px;
+            font-family: 'Kalam', cursive;
+            flex-shrink: 0;
+        }
+        .rank-1 { background: #FFD700; color: #b8860b; border: 2px solid #b8860b; font-size: 1.2rem;}
+        .rank-2 { background: #E0E0E0; color: #757575; border: 2px solid #9e9e9e; font-size: 1.1rem;}
+        .rank-3 { background: #CD7F32; color: #5d4037; border: 2px solid #8d6e63; font-size: 1rem;}
+        .rank-other { background: #f1f5f9; color: #898D8D; }
+
+        .valve-core {
+            cursor: pointer;
+            transition: transform 0.05s ease;
+            user-select: none;
+            -webkit-tap-highlight-color: transparent;
+            position: relative;
+        }
+        .valve-core:active { transform: scale(0.92) !important; }
+        
+        @keyframes heartbeat {
+            0%, 100% { transform: scale(1); }
+            15% { transform: scale(1.05); }
+            30% { transform: scale(1); }
+            45% { transform: scale(1.05); }
+        }
+        .animate-heartbeat { animation: heartbeat 2s infinite; }
+
+        @keyframes float-up-fade {
+            0% { opacity: 1; transform: translateY(0) scale(1) rotate(0deg); }
+            100% { opacity: 0; transform: translateY(-100px) scale(1.5) rotate(15deg); }
+        }
+        .particle-score {
+            position: absolute;
+            color: #C8102E;
+            font-family: 'Kalam', cursive;
+            font-weight: bold;
+            font-size: 1.5rem;
+            pointer-events: none;
+            animation: float-up-fade 0.8s ease-out forwards;
+            text-shadow: 2px 2px 0 #fff;
+            z-index: 50;
+        }
+        .no-scrollbar::-webkit-scrollbar { display: none; }
+        .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+    </style>
+</head>
+<body class="antialiased font-sans overflow-x-hidden relative">
+
+    <header class="w-full bg-white border-b-4 border-edwards-ink shadow-sm p-4 flex justify-between items-center relative z-20">
+        <div class="flex items-center gap-3">
+            <img class="h-8 object-contain" src="https://lh3.googleusercontent.com/d/1QJl_AerGZd0jRqOIZY-rCVVe6U67pmJM" alt="Edwards Logo">
+            <span class="font-bold text-edwards-ink hidden md:inline border-l-2 border-slate-300 pl-3">互動挑戰區</span>
+        </div>
+        <!-- ★ 注意這裡：改為 ./index.html -->
+        <a href="./index.html" class="text-sm font-bold text-edwards-ink border-2 border-edwards-ink px-4 py-2 rounded-full hover:bg-slate-100 transition-colors shadow-[2px_2px_0_#2D3436]">
+            <i class="fa-solid fa-arrow-left mr-2"></i>返回報告
+        </a>
+    </header>
+
+    <div id="message-box" class="fixed top-24 left-1/2 transform -translate-x-1/2 z-50 hidden p-4 rounded-xl border-2 font-bold hand-font text-center shadow-lg transition-all duration-300 w-11/12 max-w-sm bg-white border-edwards-ink text-edwards-ink">
+        <span id="message-text"></span>
+    </div>
+
+    <main class="flex-grow flex flex-col items-center justify-center p-4 w-full max-w-5xl mx-auto relative z-10">
+        
+        <div class="text-center mb-8 mt-4 w-full">
+            <h1 class="text-4xl md:text-5xl font-bold mb-2 hand-font text-edwards-ink">
+                Global Valve Defender
+            </h1>
+            <h2 class="text-xl font-bold text-edwards-gray">
+                全球瓣膜保衛戰 - 20秒極限挑戰
+            </h2>
+        </div>
+
+        <div id="loading-screen" class="sketch-box flex flex-col items-center justify-center py-16 w-full max-w-md mx-auto z-20">
+            <i class="fa-solid fa-heart-pulse text-edwards-red text-6xl animate-pulse mb-4"></i>
+            <p class="font-bold text-xl hand-font text-edwards-ink mt-4">正在連接總部資料庫...</p>
+        </div>
+
+        <div id="login-screen" class="hidden sketch-box flex-col items-center justify-center p-8 w-full max-w-md mx-auto z-20">
+            <i class="fa-solid fa-user-nurse text-edwards-red text-5xl mb-4"></i>
+            <h3 class="text-2xl font-bold mb-2 text-edwards-ink text-center">報到！護心使者</h3>
+            <p class="text-slate-500 font-medium text-sm text-center mb-6">請輸入代號，加入這場全球保衛戰。</p>
+            
+            <input type="text" id="input-nickname" maxlength="10" placeholder="最多 10 個字元" class="sketch-input mb-6" autocomplete="off">
+            <button id="btn-start" class="sketch-btn text-xl w-full py-3">
+                <i class="fa-solid fa-stethoscope mr-2"></i> 登入資料庫
+            </button>
+        </div>
+
+        <div id="game-screen" class="hidden w-full flex-col md:flex-row gap-6 pb-10">
+            <div class="sketch-box bg-[#fff8f8] flex-1 flex flex-col items-center justify-between p-6 relative min-h-[400px]">
+                <div class="text-center w-full z-10 bg-white/80 rounded-xl p-3 border-2 border-dashed border-edwards-ink shadow-sm relative">
+                    <div class="absolute -top-4 -right-2 bg-yellow-400 text-yellow-900 px-3 py-1 rounded-full border-2 border-edwards-ink font-bold text-xs shadow-sm rotate-3">
+                        <i class="fa-solid fa-trophy mr-1"></i>最佳紀錄: <span id="display-high-score">0</span>
+                    </div>
+                    <p class="text-edwards-gray font-bold text-sm mb-1"><i class="fa-solid fa-user mr-1"></i> <span id="display-name" class="text-edwards-ink">Player</span></p>
+                    <div class="flex items-center justify-center gap-4 mb-1 mt-1">
+                        <div class="bg-slate-100 px-3 py-1 rounded-lg border-2 border-slate-300">
+                            <i class="fa-solid fa-stopwatch text-edwards-ink mr-1"></i> 
+                            <span id="display-time" class="text-xl font-black text-edwards-ink font-mono">20.0</span>s
+                        </div>
+                    </div>
+                    <div class="flex items-end justify-center gap-2 mt-1">
+                        <span class="text-6xl font-black text-edwards-red hand-font leading-none" id="display-score">0</span>
+                        <span class="text-sm font-bold text-slate-500 mb-2 hand-font">Pts</span>
+                    </div>
+                </div>
+
+                <div class="relative flex-grow flex items-center justify-center w-full my-8">
+                    <div class="absolute w-48 h-48 bg-red-100 rounded-full blur-2xl opacity-50 pointer-events-none"></div>
+                    <div id="valve-btn" class="valve-core animate-heartbeat relative flex items-center justify-center w-48 h-48 md:w-64 md:h-64 rounded-full border-4 border-edwards-ink bg-white shadow-[8px_8px_0_#C8102E]">
+                        <i class="fa-solid fa-heart text-edwards-red text-[8rem] md:text-[11rem] drop-shadow-md"></i>
+                        <i class="fa-solid fa-shield-heart absolute text-white text-[3rem] md:text-[4rem] opacity-90 drop-shadow-sm"></i>
+                    </div>
+                </div>
+
+                <div class="text-center z-10 w-full mt-auto min-h-[50px] flex items-center justify-center">
+                    <button id="btn-start-session" class="sketch-btn text-xl px-8 py-3 w-full max-w-[250px] animate-bounce">
+                        <i class="fa-solid fa-bolt mr-2"></i>開始 20 秒挑戰
+                    </button>
+                    <p id="game-instruction" class="hidden font-bold text-edwards-ink bg-white px-6 py-3 rounded-full border-2 border-edwards-ink shadow-[2px_2px_0_#898D8D] inline-block text-lg">
+                        <i class="fa-solid fa-hand-pointer mr-2 text-edwards-red"></i>剩餘時間內瘋狂點擊！
+                    </p>
+                </div>
+            </div>
+
+            <div class="sketch-box flex-1 flex flex-col p-6 h-[500px] md:h-auto">
+                <div class="flex justify-between items-end mb-4 border-b-2 border-edwards-ink pb-2 shrink-0">
+                    <h3 class="text-xl font-bold text-edwards-ink hand-font">
+                        <i class="fa-solid fa-earth-asia text-blue-500 mr-2"></i>全球英雄榜
+                    </h3>
+                    <span class="text-xs font-bold text-slate-400 bg-slate-100 px-2 py-1 rounded-md" id="online-count">同步中...</span>
+                </div>
+                
+                <div id="leaderboard-container" class="flex-1 overflow-y-auto pr-2 no-scrollbar space-y-2">
+                    <div class="flex flex-col items-center justify-center h-full text-slate-400 font-bold">
+                        <i class="fa-solid fa-spinner fa-spin text-2xl mb-2"></i> 正在擷取戰況...
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
+        import { getAuth, signInAnonymously, signInWithCustomToken } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
+        import { getFirestore, doc, getDoc, setDoc, updateDoc, onSnapshot, collection } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
+
+        const appId = typeof __app_id !== 'undefined' ? __app_id : 'edwards-valve-clicker';
+        const firebaseConfig = typeof __firebase_config !== 'undefined' ? JSON.parse(__firebase_config) : { projectId: "demo-project" };
+        
+        let app, db, auth, currentUser;
+        let myData = { name: "Guest", score: 0 };
+        let syncedScore = 0;
+        let lastSyncTime = 0;
+        let syncTimeout = null;
+        let isSyncing = false;
+        let isOfflineMode = false;
+
+        const screens = {
+            loading: document.getElementById('loading-screen'),
+            login: document.getElementById('login-screen'),
+            game: document.getElementById('game-screen')
+        };
+        const inputNickname = document.getElementById('input-nickname');
+        const btnStart = document.getElementById('btn-start');
+        const valveBtn = document.getElementById('valve-btn');
+        const displayScore = document.getElementById('display-score');
+        const displayName = document.getElementById('display-name');
+        const leaderboardContainer = document.getElementById('leaderboard-container');
+        const onlineCount = document.getElementById('online-count');
+        const msgBox = document.getElementById('message-box');
+        const msgText = document.getElementById('message-text');
+        
+        const displayHighScore = document.getElementById('display-high-score');
+        const displayTime = document.getElementById('display-time');
+        const btnStartSession = document.getElementById('btn-start-session');
+        const gameInstruction = document.getElementById('game-instruction');
+
+        let isPlaying = false;
+        let timeLeft = 20.0;
+        let sessionScore = 0;
+        let timerInterval = null;
+
+        function showScreen(screenName) {
+            Object.values(screens).forEach(el => el.classList.add('hidden'));
+            screens[screenName].classList.remove('hidden');
+            screens[screenName].classList.add('flex');
+        }
+
+        function showMessage(text, isError = false, isWarning = false) {
+            msgText.innerHTML = text;
+            let colorClass = 'bg-white border-edwards-ink text-edwards-ink';
+            let shadowColor = '#2D3436';
+            
+            if (isError) {
+                colorClass = 'bg-red-50 border-edwards-red text-edwards-red';
+                shadowColor = '#C8102E';
+            } else if (isWarning) {
+                colorClass = 'bg-yellow-50 border-yellow-600 text-yellow-700';
+                shadowColor = '#ca8a04';
+            }
+
+            msgBox.className = `fixed top-24 left-1/2 transform -translate-x-1/2 z-50 p-4 rounded-xl border-2 font-bold hand-font text-center shadow-[4px_4px_0_${shadowColor}] transition-all duration-300 w-11/12 max-w-sm ${colorClass}`;
+            msgBox.classList.remove('hidden');
+            msgBox.classList.add('-translate-y-4');
+            setTimeout(() => msgBox.classList.remove('-translate-y-4'), 100);
+            setTimeout(() => { msgBox.classList.add('hidden'); }, 3000);
+        }
+
+        const getPlayersCollectionRef = () => collection(db, 'artifacts', appId, 'public', 'data', 'clicker_players');
+        const getMyDocRef = () => doc(db, 'artifacts', appId, 'public', 'data', 'clicker_players', currentUser.uid);
+
+        async function initApp() {
+            try {
+                app = initializeApp(firebaseConfig);
+                db = getFirestore(app);
+                auth = getAuth(app);
+
+                if (typeof __initial_auth_token !== 'undefined' && __initial_auth_token) {
+                    await signInWithCustomToken(auth, __initial_auth_token);
+                } else {
+                    await signInAnonymously(auth);
+                }
+                
+                currentUser = auth.currentUser;
+                if(!currentUser) throw new Error("Auth Failed");
+
+                const myDocSnap = await getDoc(getMyDocRef());
+                if (myDocSnap.exists()) {
+                    myData = myDocSnap.data();
+                    syncedScore = myData.score;
+                    startGame(true); 
+                } else {
+                    showScreen('login');
+                }
+            } catch (error) {
+                console.warn("連線或權限受限，啟用單機防呆模式:", error);
+                isOfflineMode = true;
+                currentUser = { uid: 'offline_user_' + Math.floor(Math.random() * 1000) };
+                showScreen('login');
+                showMessage("<i class='fa-solid fa-wifi mr-2'></i> 網路受限，已切換為「單機體驗模式」", false, true);
+            }
+        }
+
+        async function handleStart() {
+            const name = inputNickname.value.trim();
+            if (!name) { showMessage("請輸入護心使者代號！", true); return; }
+            
+            btnStart.disabled = true;
+            btnStart.innerHTML = '<i class="fa-solid fa-spinner fa-spin mr-2"></i> 裝備中...';
+
+            myData.name = name;
+            myData.score = 0;
+            myData.timestamp = Date.now();
+
+            if (isOfflineMode) {
+                setTimeout(() => startGame(false), 600);
+                return;
+            }
+
+            try {
+                await setDoc(getMyDocRef(), myData);
+                startGame(false);
+            } catch (error) {
+                showMessage("建立代號失敗，請重試", true);
+                btnStart.disabled = false;
+                btnStart.innerHTML = '<i class="fa-solid fa-stethoscope mr-2"></i> 登入資料庫';
+            }
+        }
+
+        function startGame(isReturning) {
+            displayName.innerText = myData.name;
+            displayHighScore.innerText = myData.score;
+            displayScore.innerText = "0";
+            showScreen('game');
+
+            if (isReturning) showMessage(`歡迎回來，${myData.name}！點擊下方按鈕開始挑戰！`);
+            else showMessage("成功加入！點擊「開始挑戰」證明實力！");
+
+            setupGameInteractions();
+            startLeaderboardSync();
+        }
+
+        function setupGameInteractions() {
+            valveBtn.addEventListener('contextmenu', e => e.preventDefault());
+            btnStartSession.addEventListener('click', startSession);
+
+            valveBtn.addEventListener('pointerdown', (e) => {
+                e.preventDefault(); 
+                if (!isPlaying) {
+                    valveBtn.style.transform = 'translate(5px, 5px)';
+                    setTimeout(() => valveBtn.style.transform = '', 50);
+                    return;
+                }
+                
+                sessionScore += 1;
+                displayScore.innerText = sessionScore;
+                createParticle(e.clientX, e.clientY);
+                
+                if (sessionScore > myData.score) {
+                    myData.score = sessionScore;
+                    displayHighScore.innerText = myData.score;
+                    scheduleSync();
+                }
+            });
+        }
+        
+        function startSession() {
+            isPlaying = true;
+            timeLeft = 20.0;
+            sessionScore = 0;
+            displayScore.innerText = sessionScore;
+            displayTime.innerText = timeLeft.toFixed(1);
+            displayTime.classList.remove('text-edwards-red', 'animate-pulse');
+            displayTime.classList.add('text-edwards-ink');
+            
+            btnStartSession.classList.add('hidden');
+            btnStartSession.classList.remove('animate-bounce');
+            gameInstruction.classList.remove('hidden');
+            gameInstruction.classList.add('animate-bounce');
+            
+            timerInterval = setInterval(() => {
+                timeLeft -= 0.1;
+                if (timeLeft <= 5.0 && !displayTime.classList.contains('text-edwards-red')) {
+                    displayTime.classList.remove('text-edwards-ink');
+                    displayTime.classList.add('text-edwards-red', 'animate-pulse');
+                }
+                if (timeLeft <= 0) { timeLeft = 0; endSession(); }
+                displayTime.innerText = timeLeft.toFixed(1);
+            }, 100);
+        }
+
+        function endSession() {
+            isPlaying = false;
+            clearInterval(timerInterval);
+            displayTime.classList.remove('animate-pulse');
+            
+            btnStartSession.classList.remove('hidden');
+            gameInstruction.classList.add('hidden');
+            gameInstruction.classList.remove('animate-bounce');
+            btnStartSession.innerHTML = '<i class="fa-solid fa-rotate-right mr-2"></i>再挑戰一次';
+            
+            if (sessionScore >= myData.score && sessionScore > 0) {
+                showMessage(`太神了！新高分：${sessionScore} 分！`, false, false);
+                scheduleSync();
+            } else {
+                showMessage(`時間到！本次：${sessionScore} 分，還差 ${myData.score - sessionScore} 分破紀錄！`, false, true);
+            }
+        }
+
+        function createParticle(x, y) {
+            const particle = document.createElement('div');
+            particle.className = 'particle-score';
+            particle.innerText = '+1';
+            
+            if(!x || !y) {
+                const rect = valveBtn.getBoundingClientRect();
+                x = rect.left + rect.width / 2;
+                y = rect.top + rect.height / 2;
+            }
+            
+            const offsetX = (Math.random() - 0.5) * 40;
+            const offsetY = (Math.random() - 0.5) * 40;
+
+            particle.style.left = `${x + offsetX - 15}px`;
+            particle.style.top = `${y + offsetY - 20}px`;
+
+            document.body.appendChild(particle);
+            setTimeout(() => { particle.remove(); }, 800);
+        }
+
+        function scheduleSync() {
+            if (syncTimeout) return; 
+            const syncInterval = 1500; 
+            const timeSinceLastSync = Date.now() - lastSyncTime;
+
+            if (timeSinceLastSync >= syncInterval) { executeSync(); } 
+            else {
+                syncTimeout = setTimeout(() => { executeSync(); syncTimeout = null; }, syncInterval - timeSinceLastSync);
+            }
+        }
+
+        async function executeSync() {
+            if (!currentUser || isSyncing || myData.score === syncedScore) return;
+            if (isOfflineMode) { syncedScore = myData.score; renderOfflineLeaderboard(); return; }
+
+            isSyncing = true;
+            const scoreToSync = myData.score;
+            try {
+                await updateDoc(getMyDocRef(), { score: scoreToSync, timestamp: Date.now() });
+                syncedScore = scoreToSync;
+                lastSyncTime = Date.now();
+            } catch (error) { console.error("Sync Error:", error); } 
+            finally { isSyncing = false; }
+        }
+
+        function startLeaderboardSync() {
+            if (isOfflineMode) { renderOfflineLeaderboard(); return; }
+
+            onSnapshot(getPlayersCollectionRef(), (snapshot) => {
+                const allPlayers = [];
+                snapshot.forEach(doc => {
+                    const data = doc.data();
+                    allPlayers.push({ id: doc.id, name: data.name || 'Unknown', score: data.score || 0, timestamp: data.timestamp || 0 });
+                });
+
+                allPlayers.sort((a, b) => b.score !== a.score ? b.score - a.score : a.timestamp - b.timestamp);
+                onlineCount.innerText = `參戰人數: ${allPlayers.length}`;
+                renderLeaderboard(allPlayers);
+            }, (error) => {
+                leaderboardContainer.innerHTML = `<div class="text-center text-edwards-red font-bold p-4">連線中斷...</div>`;
+            });
+        }
+
+        function renderOfflineLeaderboard() {
+            onlineCount.innerText = `參戰人數: 單機模式`;
+            const mockPlayers = [
+                { id: currentUser.uid, name: myData.name, score: myData.score, timestamp: Date.now() },
+                { id: 'npc1', name: 'Dr. Edwards', score: 185, timestamp: Date.now() - 1000 },
+                { id: 'npc2', name: '餅總林岳平', score: 156, timestamp: Date.now() - 2000 },
+                { id: 'npc3', name: '勇敢的病友', score: 120, timestamp: Date.now() - 3000 },
+                { id: 'npc4', name: '熱心家屬', score: 88, timestamp: Date.now() - 4000 }
+            ];
+            mockPlayers.sort((a, b) => b.score - a.score);
+            renderLeaderboard(mockPlayers);
+        }
+
+        function renderLeaderboard(sortedPlayers) {
+            leaderboardContainer.innerHTML = '';
+            let myRankIndex = sortedPlayers.findIndex(p => p.id === currentUser?.uid);
+            const topPlayers = sortedPlayers.slice(0, 50);
+            let hasShownMe = false;
+
+            topPlayers.forEach((player, index) => {
+                const isMe = player.id === currentUser?.uid;
+                if (isMe) hasShownMe = true;
+                leaderboardContainer.appendChild(createRankRow(index + 1, player.name, player.score, isMe));
+            });
+
+            if (!hasShownMe && myRankIndex !== -1) {
+                const divider = document.createElement('div');
+                divider.className = "text-center text-slate-300 my-2";
+                divider.innerHTML = '<i class="fa-solid fa-ellipsis-vertical"></i>';
+                leaderboardContainer.appendChild(divider);
+                leaderboardContainer.appendChild(createRankRow(myRankIndex + 1, sortedPlayers[myRankIndex].name, sortedPlayers[myRankIndex].score, true));
+            }
+            
+            if (sortedPlayers.length === 0) leaderboardContainer.innerHTML = `<div class="text-center text-slate-400 font-bold p-4 mt-10">尚無保衛者加入！</div>`;
+        }
+
+        function createRankRow(rank, name, score, isMe) {
+            const div = document.createElement('div');
+            div.className = `rank-row ${isMe ? 'is-me' : ''}`;
+            
+            let badgeClass = 'rank-other';
+            let rankText = rank;
+            if (rank === 1) { badgeClass = 'rank-1'; rankText = '1'; }
+            else if (rank === 2) { badgeClass = 'rank-2'; rankText = '2'; }
+            else if (rank === 3) { badgeClass = 'rank-3'; rankText = '3'; }
+
+            div.innerHTML = `
+                <div class="rank-badge ${badgeClass}">${rankText}</div>
+                <div class="flex-grow min-w-0 mr-3">
+                    <div class="font-bold text-sm text-edwards-ink truncate ${isMe ? 'text-edwards-red' : ''}">
+                        ${name} ${isMe ? '<span class="text-[10px] bg-edwards-red text-white px-1.5 py-0.5 rounded ml-1 font-sans align-middle">YOU</span>' : ''}
+                    </div>
+                </div>
+                <div class="text-right whitespace-nowrap">
+                    <span class="font-black text-lg hand-font ${isMe ? 'text-edwards-red' : 'text-slate-600'}">${score}</span>
+                </div>
+            `;
+            return div;
+        }
+
+        btnStart.addEventListener('click', handleStart);
+        inputNickname.addEventListener('keypress', (e) => { if (e.key === 'Enter') handleStart(); });
+
+        window.addEventListener('beforeunload', () => {
+            if (myData.score > syncedScore && !isSyncing && currentUser && !isOfflineMode) {
+                updateDoc(getMyDocRef(), { score: myData.score, timestamp: Date.now() }).catch(e=>console.log(e));
+            }
+        });
+
+        window.addEventListener('load', initApp);
+    </script>
+</body>
+</html>
