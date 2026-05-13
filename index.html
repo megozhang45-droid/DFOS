@@ -532,47 +532,50 @@
                 </div>
             </div>
 
-            <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
-                <!-- 5.1 媒體報導與新聞露出 (更新為橫式精簡版型 + 修正破圖) -->
+            <!-- 取消並排，改為垂直單獨排版 -->
+            <div class="flex flex-col gap-8">
+                <!-- 5.1 媒體報導與新聞露出 (全寬單獨排版) -->
                 <div class="sketch-box shadow-[4px_4px_0_#898D8D]">
                     <h3 class="text-xl font-bold mb-6 border-b-2 border-edwards-ink pb-2"><i class="fa-solid fa-newspaper mr-2 text-edwards-red"></i>5.1 媒體報導與新聞露出</h3>
                     <div class="flex flex-col gap-4">
                         
-                        <!-- 康健雜誌 Horizontal Preview Card -->
-                        <a href="https://www.commonhealth.com.tw/article/93867" target="_blank" class="flex border-2 border-edwards-ink rounded-xl overflow-hidden hover:-translate-y-1 transition-transform shadow-[3px_3px_0_#2D3436] bg-white group h-28">
-                            <div class="w-1/3 shrink-0 relative border-r-2 border-edwards-ink bg-slate-100">
-                                <!-- 使用指定的自訂圖片 -->
-                                <img src="https://lh3.googleusercontent.com/d/1LZUMtK792I1eW4hhEuka2PPLhnGasP3A" 
-                                     alt="康健雜誌報導預覽圖" 
-                                     class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
-                                     referrerpolicy="no-referrer">
-                                <div class="absolute top-1 left-1 bg-green-600/90 backdrop-blur-sm text-white text-[10px] px-1.5 py-0.5 rounded font-bold flex items-center gap-1 shadow-sm border border-green-400">
-                                    <i class="fa-solid fa-leaf"></i> 康健
+                        <!-- 網頁版將這兩張卡片並排 -->
+                        <div class="grid grid-cols-1 lg:grid-cols-2 gap-4">
+                            <!-- 康健雜誌 Horizontal Preview Card -->
+                            <a href="https://www.commonhealth.com.tw/article/93867" target="_blank" class="flex border-2 border-edwards-ink rounded-xl overflow-hidden hover:-translate-y-1 transition-transform shadow-[3px_3px_0_#2D3436] bg-white group h-28">
+                                <div class="w-1/3 shrink-0 relative border-r-2 border-edwards-ink bg-slate-100">
+                                    <img src="https://lh3.googleusercontent.com/d/1LZUMtK792I1eW4hhEuka2PPLhnGasP3A" 
+                                         alt="康健雜誌報導預覽圖" 
+                                         class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                                         referrerpolicy="no-referrer">
+                                    <div class="absolute top-1 left-1 bg-green-600/90 backdrop-blur-sm text-white text-[10px] px-1.5 py-0.5 rounded font-bold flex items-center gap-1 shadow-sm border border-green-400">
+                                        <i class="fa-solid fa-leaf"></i> 康健
+                                    </div>
                                 </div>
-                            </div>
-                            <div class="w-2/3 p-3 bg-green-50/30 flex flex-col justify-center">
-                                <div class="font-bold text-[13px] text-edwards-ink mb-1 line-clamp-2">林岳平：「我選擇手術，是為了回到最想活的人生」</div>
-                                <div class="text-[10px] text-slate-500 font-medium line-clamp-2">「手術不是終點，而是起點」透過兩次手術生命實證，破除術後體力不支迷思。</div>
-                            </div>
-                        </a>
-                        
-                        <!-- 健康醫療網 Horizontal Preview Card -->
-                        <a href="https://www.healthnews.com.tw/article/66344" target="_blank" class="flex border-2 border-edwards-ink rounded-xl overflow-hidden hover:-translate-y-1 transition-transform shadow-[3px_3px_0_#2D3436] bg-white group h-28">
-                            <div class="w-1/3 shrink-0 relative border-r-2 border-edwards-ink bg-slate-100">
-                                <!-- 改用 Microlink API 強制模擬瀏覽器抓取原生首圖 -->
-                                <img src="https://api.microlink.io/?url=https%3A%2F%2Fwww.healthnews.com.tw%2Farticle%2F66344&embed=image.url" 
-                                     alt="健康醫療網報導預覽圖" 
-                                     class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
-                                     referrerpolicy="no-referrer">
-                                <div class="absolute top-1 left-1 bg-teal-600/90 backdrop-blur-sm text-white text-[10px] px-1.5 py-0.5 rounded font-bold flex items-center gap-1 shadow-sm border border-teal-400">
-                                    <i class="fa-solid fa-stethoscope"></i> 健康醫療網
+                                <div class="w-2/3 p-3 bg-green-50/30 flex flex-col justify-center">
+                                    <div class="font-bold text-[13px] text-edwards-ink mb-1 line-clamp-2">林岳平：「我選擇手術，是為了回到最想活的人生」</div>
+                                    <div class="text-[10px] text-slate-500 font-medium line-clamp-2">「手術不是終點，而是起點」透過兩次手術生命實證，破除術後體力不支迷思。</div>
                                 </div>
-                            </div>
-                            <div class="w-2/3 p-3 bg-teal-50/30 flex flex-col justify-center">
-                                <div class="font-bold text-[13px] text-edwards-ink mb-1 line-clamp-2">高齡心衰風險別輕忽！醫解析主動脈瓣膜置換　從術式到瓣膜類型多元選擇</div>
-                                <div class="text-[10px] text-slate-500 font-medium line-clamp-2">游皓鈞醫師解析主動脈瓣狹窄警訊，比較傳統開胸與微創手術，並帶您了解機械、組織瓣膜及新一代「可擴乾式瓣膜」的多元治療選擇。</div>
-                            </div>
-                        </a>
+                            </a>
+                            
+                            <!-- 健康醫療網 Horizontal Preview Card -->
+                            <a href="https://www.healthnews.com.tw/article/66344" target="_blank" class="flex border-2 border-edwards-ink rounded-xl overflow-hidden hover:-translate-y-1 transition-transform shadow-[3px_3px_0_#2D3436] bg-white group h-28">
+                                <div class="w-1/3 shrink-0 relative border-r-2 border-edwards-ink bg-slate-100">
+                                    <!-- 改用 Microlink API 強制模擬瀏覽器抓取原生首圖 -->
+                                    <img src="https://api.microlink.io/?url=https%3A%2F%2Fwww.healthnews.com.tw%2Farticle%2F66344&embed=image.url" 
+                                         alt="健康醫療網報導預覽圖" 
+                                         class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                                         referrerpolicy="no-referrer">
+                                    <div class="absolute top-1 left-1 bg-teal-600/90 backdrop-blur-sm text-white text-[10px] px-1.5 py-0.5 rounded font-bold flex items-center gap-1 shadow-sm border border-teal-400">
+                                        <i class="fa-solid fa-stethoscope"></i> 健康醫療網
+                                    </div>
+                                </div>
+                                <div class="w-2/3 p-3 bg-teal-50/30 flex flex-col justify-center">
+                                    <div class="font-bold text-[13px] text-edwards-ink mb-1 line-clamp-2">高齡心衰風險別輕忽！醫解析主動脈瓣膜置換　從術式到瓣膜類型多元選擇</div>
+                                    <div class="text-[10px] text-slate-500 font-medium line-clamp-2">游皓鈞醫師解析主動脈瓣狹窄警訊，比較傳統開胸與微創手術，並帶您了解機械、組織瓣膜及新一代「可擴乾式瓣膜」的多元治療選擇。</div>
+                                </div>
+                            </a>
+                        </div>
 
                         <!-- 官方粉絲團貼文維持條列式作為輔助 -->
                         <a href="https://www.facebook.com/commonhealth/posts/pfbid0YjWMp7oHXbonDQuL4P5TBN8ism35xSy4mFxiYYZHecD64Y8PGktQSZrPDnAGbwjUl" target="_blank" class="flex items-center p-2.5 border-2 border-[#1877F2] rounded-xl hover:-translate-y-1 transition-transform bg-blue-50 shadow-[2px_2px_0_#1877F2]">
@@ -746,7 +749,8 @@
                         </div>
                     </a>
 
-                    <div class="grid grid-cols-2 gap-3">
+                    <!-- 改為 4 欄並排以適應全寬版面 -->
+                    <div class="grid grid-cols-2 lg:grid-cols-4 gap-3">
                         <a href="https://www.threads.com/@pslienhsiaowei/post/DXGlHXViX0P" target="_blank" class="border-2 border-slate-300 hover:border-black rounded-2xl p-3 bg-white hover:-translate-y-1 transition-all flex flex-col gap-1 shadow-sm">
                             <div class="flex justify-between items-center">
                                 <i class="fa-brands fa-threads text-xl text-black"></i>
