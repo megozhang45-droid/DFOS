@@ -210,10 +210,20 @@
                 setTimeout(() => el.remove(), 600);
             };
 
-            // Visual Constants
-            const MAX_EXPANSION = 26; 
+            // ==========================================
+            // Visual Constants & Mechanics (Perfect Overlap to Separation)
+            // ==========================================
+            // 擴張總距離 (像素)。最大值 60 表示左右各向外平移 30px
+            const MAX_EXPANSION = 60; 
             const expansionDistance = (clicks / TARGET_CLICKS) * MAX_EXPANSION;
+            const dx = expansionDistance / 2; 
             const innerOpacity = clicks / TARGET_CLICKS;
+            
+            // 左環向右延伸至 120，右環向左延伸至 80，初始重疊寬度 = 40
+            // 當 dx > 20 時 (2*dx > 40)，兩端就會徹底脫離重疊並產生縫隙
+            const isSeparated = dx > 20; 
+            // 讓箭頭在分離階段逐漸浮現
+            const arrowOpacity = Math.max(0, (dx - 20) / 10); 
             const displayLeaderboard = isFirebaseEnabled ? leaderboard : localLeaderboard;
 
             if (gameState === 'loading') {
@@ -324,39 +334,45 @@
                                                             <filter id="glow" x="-20%" y="-20%" width="140%" height="140%"><feGaussianBlur stdDeviation="3" result="blur" /><feComposite in="SourceGraphic" in2="blur" operator="over" /></filter>
                                                         </defs>
 
+                                                        {/* Base Background Pattern */}
                                                         <pattern id="valveGrid" width="20" height="20" patternUnits="userSpaceOnUse"><circle cx="2" cy="2" r="1.5" fill="#cbd5e1" opacity="0.6" /></pattern>
                                                         <rect width="200" height="200" fill="url(#valveGrid)" />
 
+                                                        {/* ======================================================== */}
+                                                        {/* VFit Valve Symmetric Expanding Mechanism SVG Construction */}
+                                                        {/* ======================================================== */}
                                                         <g style={{ transition: 'transform 0.1s ease-out' }}>
-                                                            <g style={{ transform: `translateX(-${expansionDistance/2}px)` }}>
-                                                                <path d="M 100 22 A 78 78 0 0 0 100 178" fill="none" stroke="#f8fafc" strokeWidth="12" filter="drop-shadow(-2px 4px 4px rgba(0,0,0,0.15))" />
-                                                                <path d="M 100 22 A 78 78 0 0 0 100 178" fill="none" stroke="#cbd5e1" strokeWidth="1" strokeDasharray="4 4" />
-                                                                <path d="M 100 32 A 68 68 0 0 0 100 168" fill="none" stroke="url(#metalGrad)" strokeWidth="14" filter="drop-shadow(-2px 2px 2px rgba(0,0,0,0.3))" />
-                                                                <rect x="80" y="25" width="55" height="14" rx="2" fill="#2A0808" />
-                                                                <rect x="80" y="161" width="55" height="14" rx="2" fill="#2A0808" />
+                                                            
+                                                            {/* --- 1. 左半邊金屬環 (向左平移 -dx) --- */}
+                                                            {/* 左環延伸到 x=120，負責覆蓋中心以左及中心點右側的重疊區 */}
+                                                            <g style={{ transform: `translateX(${-dx}px)` }}>
+                                                                {/* 底部：白色縫合環 */}
+                                                                <path d="M 120 22 L 100 22 A 78 78 0 0 0 100 178 L 120 178" fill="none" stroke="#f8fafc" strokeWidth="16" strokeLinecap="round" filter="drop-shadow(-2px 2px 2px rgba(0,0,0,0.1))" />
+                                                                <path d="M 120 22 L 100 22 A 78 78 0 0 0 100 178 L 120 178" fill="none" stroke="#cbd5e1" strokeWidth="1" strokeDasharray="4 4" strokeLinecap="round" />
+                                                                
+                                                                {/* 主體：鈷鉻合金金屬本體 */}
+                                                                <path d="M 120 32 L 100 32 A 68 68 0 0 0 100 168 L 120 168" fill="none" stroke="url(#metalGrad)" strokeWidth="12" strokeLinecap="round" filter="drop-shadow(-1px 2px 2px rgba(0,0,0,0.3))" />
+                                                                
+                                                                {/* 內部構造：黑色溝槽紋理 (模擬滑軌內側) */}
+                                                                <path d="M 105 32 L 116 32 M 105 168 L 116 168" fill="none" stroke="#1a0505" strokeWidth="3" strokeLinecap="round" opacity="0.7" />
                                                             </g>
 
-                                                            <g style={{ transform: `translateX(${expansionDistance/2}px)` }}>
-                                                                <path d="M 100 22 A 78 78 0 0 1 100 178" fill="none" stroke="#f8fafc" strokeWidth="12" filter="drop-shadow(2px 4px 4px rgba(0,0,0,0.15))" />
-                                                                <path d="M 100 22 A 78 78 0 0 1 100 178" fill="none" stroke="#cbd5e1" strokeWidth="1" strokeDasharray="4 4" />
-                                                                <path d="M 100 32 A 68 68 0 0 1 100 168" fill="none" stroke="url(#metalGrad)" strokeWidth="14" filter="drop-shadow(2px 2px 2px rgba(0,0,0,0.3))" />
-                                                                <rect x="75" y="28" width="45" height="8" rx="3" fill="url(#metalGrad)" filter="drop-shadow(0px 1px 1px rgba(0,0,0,0.5))" />
-                                                                <rect x="80" y="30" width="30" height="2" rx="1" fill="#cbd5e1" opacity="0.6" />
-                                                                <rect x="75" y="164" width="45" height="8" rx="3" fill="url(#metalGrad)" filter="drop-shadow(0px 1px 1px rgba(0,0,0,0.5))" />
-                                                                <rect x="80" y="166" width="30" height="2" rx="1" fill="#cbd5e1" opacity="0.6" />
+                                                            {/* --- 2. 右半邊金屬環 (向右平移 +dx) --- */}
+                                                            {/* 右環延伸到 x=80，負責覆蓋中心以右及中心點左側的重疊區 */}
+                                                            {/* 因為 Right 在 SVG 後方宣告，它會覆蓋在 Left 上方，完美形成連貫的金屬環錯覺 */}
+                                                            <g style={{ transform: `translateX(${dx}px)` }}>
+                                                                {/* 底部：白色縫合環 */}
+                                                                <path d="M 80 22 L 100 22 A 78 78 0 0 1 100 178 L 80 178" fill="none" stroke="#f8fafc" strokeWidth="16" strokeLinecap="round" filter="drop-shadow(2px 2px 2px rgba(0,0,0,0.1))" />
+                                                                <path d="M 80 22 L 100 22 A 78 78 0 0 1 100 178 L 80 178" fill="none" stroke="#cbd5e1" strokeWidth="1" strokeDasharray="4 4" strokeLinecap="round" />
+                                                                
+                                                                {/* 主體：鈷鉻合金金屬本體 */}
+                                                                <path d="M 80 32 L 100 32 A 68 68 0 0 1 100 168 L 80 168" fill="none" stroke="url(#metalGrad)" strokeWidth="12" strokeLinecap="round" filter="drop-shadow(1px 2px 2px rgba(0,0,0,0.3))" />
+                                                                
+                                                                {/* 內部構造：黑色溝槽紋理 (模擬滑軌內側) */}
+                                                                <path d="M 84 32 L 95 32 M 84 168 L 95 168" fill="none" stroke="#1a0505" strokeWidth="3" strokeLinecap="round" opacity="0.7" />
                                                             </g>
 
-                                                            <g style={{ transform: `translateX(-${expansionDistance/2}px)` }}>
-                                                                <rect x="80" y="23" width="52" height="4" fill="url(#metalGrad)" />
-                                                                <rect x="80" y="37" width="52" height="4" fill="url(#metalGrad)" />
-                                                                <rect x="130" y="23" width="5" height="18" rx="2" fill="url(#metalGrad)" filter="drop-shadow(2px 0px 1px rgba(0,0,0,0.3))" />
-                                                                <circle cx="85" cy="32" r="1.5" fill="#2D3436" />
-                                                                <rect x="80" y="159" width="52" height="4" fill="url(#metalGrad)" />
-                                                                <rect x="80" y="173" width="52" height="4" fill="url(#metalGrad)" />
-                                                                <rect x="130" y="159" width="5" height="18" rx="2" fill="url(#metalGrad)" filter="drop-shadow(2px 0px 1px rgba(0,0,0,0.3))" />
-                                                                <circle cx="85" cy="168" r="1.5" fill="#2D3436" />
-                                                            </g>
-
+                                                            {/* --- 3. 中心擴張氣球與 TAVR 網狀支架 --- */}
                                                             <g style={{ opacity: 0.3 + innerOpacity * 0.7 }}>
                                                                 <circle cx="100" cy="100" r={25 + innerOpacity * 42} fill="url(#balloonGrad)" className={gameState === 'playing' ? 'animate-pulse' : ''} filter="drop-shadow(0px 0px 8px rgba(200,16,46,0.4))" />
                                                                 <g style={{ transform: `scale(${0.35 + innerOpacity * 0.65})`, transformOrigin: '100px 100px' }}>
@@ -367,14 +383,19 @@
                                                                 </g>
                                                             </g>
 
-                                                            {clicks > 0 && (
-                                                                <g style={{ opacity: innerOpacity * 1.5 }}>
-                                                                    <path d="M 88 32 L 95 28 L 95 36 Z" fill="#C8102E" />
-                                                                    <path d="M 112 32 L 105 28 L 105 36 Z" fill="#C8102E" />
-                                                                    <line x1="95" y1="32" x2="105" y2="32" stroke="#C8102E" strokeWidth="2" strokeDasharray="2 2" />
-                                                                    <path d="M 88 168 L 95 164 L 95 172 Z" fill="#C8102E" />
-                                                                    <path d="M 112 168 L 105 164 L 105 172 Z" fill="#C8102E" />
-                                                                    <line x1="95" y1="168" x2="105" y2="168" stroke="#C8102E" strokeWidth="2" strokeDasharray="2 2" />
+                                                            {/* --- 4. 擴張分離指示箭頭 (動態浮現於縫隙中) --- */}
+                                                            {/* 只有當 dx > 20 (重疊完全脫離產生縫隙) 時，箭頭才會淡入顯示 */}
+                                                            {isSeparated && (
+                                                                <g style={{ opacity: arrowOpacity, transition: 'opacity 0.2s ease-in' }}>
+                                                                    {/* 上方缺口指示箭頭 */}
+                                                                    <line x1="90" y1="32" x2="110" y2="32" stroke="#C8102E" strokeWidth="1.5" strokeDasharray="2 2" />
+                                                                    <polyline points="93,29 90,32 93,35" fill="none" stroke="#C8102E" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
+                                                                    <polyline points="107,29 110,32 107,35" fill="none" stroke="#C8102E" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
+                                                                    
+                                                                    {/* 下方缺口指示箭頭 */}
+                                                                    <line x1="90" y1="168" x2="110" y2="168" stroke="#C8102E" strokeWidth="1.5" strokeDasharray="2 2" />
+                                                                    <polyline points="93,165 90,168 93,171" fill="none" stroke="#C8102E" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
+                                                                    <polyline points="107,165 110,168 107,171" fill="none" stroke="#C8102E" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
                                                                 </g>
                                                             )}
                                                         </g>
