@@ -151,7 +151,7 @@
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/11.0.0/firebase-app.js";
         import { getAuth, signInAnonymously } from "https://www.gstatic.com/firebasejs/11.0.0/firebase-auth.js";
-        import { getFirestore, collection, addDoc, onSnapshot, query, orderBy, limit, getDocs } from "https://www.gstatic.com/firebasejs/11.0.0/firebase-firestore.js";
+        import { getFirestore, collection, addDoc, onSnapshot, query, orderBy, limit } from "https://www.gstatic.com/firebasejs/11.0.0/firebase-firestore.js";
 
         const firebaseConfig = {
             apiKey: "AIzaSyA2i5zli07cm_Vde7zYPrlCrgCOkKQ3vf4",
@@ -193,9 +193,15 @@
             syncStatus: document.getElementById('sync-status')
         };
 
-        function getMMDD() {
+        // 取得包含時分秒的時間格式
+        function getDateTime() {
             const d = new Date();
-            return `${(d.getMonth()+1).toString().padStart(2,'0')}/${d.getDate().toString().padStart(2,'0')}`;
+            const MM = (d.getMonth() + 1).toString().padStart(2, '0');
+            const DD = d.getDate().toString().padStart(2, '0');
+            const hh = d.getHours().toString().padStart(2, '0');
+            const mm = d.getMinutes().toString().padStart(2, '0');
+            const ss = d.getSeconds().toString().padStart(2, '0');
+            return `${MM}/${DD} ${hh}:${mm}:${ss}`;
         }
 
         async function init() {
@@ -238,7 +244,7 @@
                     <div class="rank-badge ${i<=3 ? 'rank-'+i : 'bg-gray-100 text-gray-400'}">${i++}</div>
                     <div class="flex-grow font-bold truncate text-xs">
                         ${d.name} ${isMe ? '<span class="text-[8px] text-red-500">(你)</span>' : ''}
-                        <div class="text-[8px] text-gray-400 font-normal">${d.date || '--/--'}</div>
+                        <div class="text-[9px] text-gray-400 font-normal tracking-tight mt-0.5">${d.date || '--/--'}</div>
                     </div>
                     <div class="font-black text-sm">${d.score}</div>
                 `;
@@ -250,11 +256,11 @@
         function startRealtimeSync() {
             if(!db) return;
             const q = query(collection(db, COLL_ID), orderBy("score", "desc"), limit(50));
-            // onSnapshot 會建立即時連線，資料庫一有變動就會立刻觸發此回呼函式
+            // 即時連線，資料庫一有變動立刻觸發
             onSnapshot(q, (snap) => {
                 ui.syncStatus.classList.remove('hidden');
                 renderLeaderboard(snap);
-                // 顯示更新中動畫一秒後隱藏，讓玩家知道有即時更新發生
+                // 顯示更新狀態提示一秒後隱藏
                 setTimeout(() => ui.syncStatus.classList.add('hidden'), 1000);
             });
         }
@@ -291,24 +297,22 @@
             ui.instr.classList.add('hidden');
             ui.btnPlay.innerText = "再次挑戰";
 
-            const today = getMMDD();
+            const sessionDateStr = getDateTime();
 
             if(sessionScore > bestScore) {
                 bestScore = sessionScore;
-                bestDate = today;
+                bestDate = sessionDateStr;
                 ui.best.innerText = bestScore + ` (${bestDate})`;
                 localStorage.setItem('valve_best_v2', JSON.stringify({score: bestScore, date: bestDate}));
             }
 
             if(db && currentUser) {
                 try {
-                    // 只要這裡 addDoc 成功，資料庫產生變化
-                    // 所有開啟此網頁的玩家，包含自己，其 onSnapshot 就會立刻被觸發
-                    // 達成完美的「即時更新」
+                    // Firebase onSnapshot 會自動捕捉此更新並刷新所有客戶端
                     await addDoc(collection(db, COLL_ID), {
                         name: currentSessionName,
                         score: sessionScore,
-                        date: today,
+                        date: sessionDateStr,
                         uid: currentUser.uid,
                         timestamp: Date.now()
                     });
