@@ -83,7 +83,8 @@
         function App() {
             const [user, setUser] = useState(null);
             const [nickname, setNickname] = useState('');
-            const [gameState, setGameState] = useState('loading'); // 'loading', 'login', 'playing', 'finished'
+            const [gameState, setGameState] = useState('loading'); // 'loading', 'login', 'countdown', 'playing', 'finished'
+            const [countdown, setCountdown] = useState(3);
             const [clicks, setClicks] = useState(0);
             const [time, setTime] = useState(0);
             const [bestTime, setBestTime] = useState(null);
@@ -141,17 +142,35 @@
             // --- Game Logic ---
             const startGame = () => {
                 if (nickname.trim() === '') return;
-                setGameState('playing');
+                
+                // 進入倒數狀態
+                setGameState('countdown');
+                setCountdown(3);
                 setClicks(0);
                 setTime(0);
                 setCanPlayAgain(false);
                 clearInterval(timerRef.current);
-                timerRef.current = setInterval(() => {
-                    setTime(t => t + 10);
-                }, 10);
+
+                let counter = 3;
+                const countdownInterval = setInterval(() => {
+                    counter--;
+                    if (counter > 0) {
+                        setCountdown(counter);
+                    } else if (counter === 0) {
+                        setCountdown('GO!');
+                    } else {
+                        // 倒數結束，開始遊戲
+                        clearInterval(countdownInterval);
+                        setGameState('playing');
+                        timerRef.current = setInterval(() => {
+                            setTime(t => t + 10);
+                        }, 10);
+                    }
+                }, 1000);
             };
 
             const handleValveClick = (e) => {
+                // 只有在 playing 狀態才允許點擊（countdown 狀態點擊無效）
                 if (gameState !== 'playing') return;
 
                 const newClicks = clicks + 1;
@@ -211,18 +230,13 @@
             };
 
             // ==========================================
-            // Visual Constants & Mechanics (Perfect Overlap to Separation)
+            // Visual Constants & Mechanics
             // ==========================================
-            // 擴張總距離 (像素)。最大值 60 表示左右各向外平移 30px
             const MAX_EXPANSION = 60; 
             const expansionDistance = (clicks / TARGET_CLICKS) * MAX_EXPANSION;
             const dx = expansionDistance / 2; 
             const innerOpacity = clicks / TARGET_CLICKS;
-            
-            // 左環向右延伸至 120，右環向左延伸至 80，初始重疊寬度 = 40
-            // 當 dx > 20 時 (2*dx > 40)，兩端就會徹底脫離重疊並產生縫隙
             const isSeparated = dx > 20; 
-            // 讓箭頭在分離階段逐漸浮現
             const arrowOpacity = Math.max(0, (dx - 20) / 10); 
             const displayLeaderboard = isFirebaseEnabled ? leaderboard : localLeaderboard;
 
@@ -278,12 +292,12 @@
                                             {!isFirebaseEnabled && (
                                                 <div className="bg-amber-100 text-amber-800 text-xs font-bold p-2 mb-4 rounded-lg border-2 border-amber-300 transform rotate-1">⚡ 提示：目前為單機遊玩模式</div>
                                             )}
-                                            <input type="text" placeholder="輸入挑戰暱稱..." maxLength="10" value={nickname} onChange={(e) => setNickname(e.target.value)} className="border-2 border-[#2D3436] bg-[#FDFBF7] rounded-[15px_225px_15px_255px/255px_15px_225px_15px] px-4 py-3 w-full text-center text-lg font-bold focus:outline-none focus:border-[#C8102E] focus:shadow-[2px_2px_0_#C8102E] transition-all mb-6" />
+                                            <input type="text" placeholder="輸入挑戰暱稱..." maxLength="10" value={nickname} onChange={(e) => setNickname(e.target.value)} onKeyDown={(e) => e.key === 'Enter' && nickname.trim() !== '' && startGame()} className="border-2 border-[#2D3436] bg-[#FDFBF7] rounded-[15px_225px_15px_255px/255px_15px_225px_15px] px-4 py-3 w-full text-center text-lg font-bold focus:outline-none focus:border-[#C8102E] focus:shadow-[2px_2px_0_#C8102E] transition-all mb-6" />
                                             <button onClick={startGame} disabled={nickname.trim() === ''} className={`${btnStyle} w-full text-xl`} style={sketchFont}>開始挑戰</button>
                                         </div>
                                     )}
 
-                                    {(gameState === 'playing' || gameState === 'finished') && (
+                                    {(gameState === 'countdown' || gameState === 'playing' || gameState === 'finished') && (
                                         <div className={`${boxStylePrimary} p-6 relative bg-white flex flex-col overflow-hidden`}>
                                             
                                             <div className="flex justify-between items-center mb-6 pb-4 border-b-2 border-dashed border-slate-300 relative z-20">
@@ -298,8 +312,15 @@
                                                 )}
                                             </div>
 
-                                            {gameState === 'playing' ? (
-                                                <div className="flex justify-around items-center mb-8 relative z-20">
+                                            {/* 動態切換上方看板: 倒數中 / 遊玩中 / 結算 */}
+                                            {gameState === 'countdown' ? (
+                                                <div className="flex justify-center items-center mb-8 relative z-20 min-h-[88px]">
+                                                    <div className="text-6xl font-black text-[#C8102E] animate-bounce filter drop-shadow-[2px_2px_0_#2D3436]" style={sketchFont}>
+                                                        {countdown}
+                                                    </div>
+                                                </div>
+                                            ) : gameState === 'playing' ? (
+                                                <div className="flex justify-around items-center mb-8 relative z-20 min-h-[88px]">
                                                     <div className="text-center bg-slate-50 border-2 border-[#2D3436] p-3 rounded-[15px_225px_15px_255px/255px_15px_225px_15px] shadow-[2px_2px_0_#2D3436] min-w-[100px] transform -rotate-1">
                                                         <i className="fa-regular fa-clock text-[#898D8D] text-2xl mx-auto mb-1 block"></i>
                                                         <div className="text-2xl font-black font-mono text-[#2D3436]">{formatTime(time)}</div>
@@ -311,7 +332,7 @@
                                                     </div>
                                                 </div>
                                             ) : (
-                                                <div className="flex flex-col items-center justify-center mb-8 relative z-20 bg-[#FDFBF7] border-4 border-[#2D3436] rounded-[15px_225px_15px_255px/255px_15px_225px_15px] p-4 shadow-[4px_4px_0_#C8102E] transform rotate-1 animate-[bounce_0.5s_ease-out]">
+                                                <div className="flex flex-col items-center justify-center mb-8 relative z-20 bg-[#FDFBF7] border-4 border-[#2D3436] rounded-[15px_225px_15px_255px/255px_15px_225px_15px] p-4 shadow-[4px_4px_0_#C8102E] transform rotate-1 animate-[bounce_0.5s_ease-out] min-h-[88px]">
                                                     <div className="flex items-center justify-center gap-4 mb-4 w-full">
                                                         <i className="fa-solid fa-trophy text-amber-400 text-5xl animate-bounce filter drop-shadow-[2px_2px_0_#2D3436]"></i>
                                                         <div className="text-left">
@@ -326,7 +347,7 @@
                                             )}
 
                                             <div className="relative w-72 h-72 mx-auto mt-2 mb-6">
-                                                <div ref={valveRef} onClick={handleValveClick} className={`absolute inset-0 select-none transition-transform active:scale-[0.98] z-10 flex items-center justify-center bg-white border-4 border-[#2D3436] rounded-full shadow-[inset_0_0_30px_rgba(0,0,0,0.05),8px_8px_0_rgba(200,16,46,0.15)] overflow-hidden group ${gameState === 'playing' ? 'cursor-pointer' : ''}`}>
+                                                <div ref={valveRef} onClick={handleValveClick} className={`absolute inset-0 select-none transition-transform z-10 flex items-center justify-center bg-white border-4 border-[#2D3436] rounded-full shadow-[inset_0_0_30px_rgba(0,0,0,0.05),8px_8px_0_rgba(200,16,46,0.15)] overflow-hidden group ${gameState === 'playing' ? 'cursor-pointer active:scale-[0.98]' : gameState === 'countdown' ? 'opacity-90 grayscale-[20%]' : ''}`}>
                                                     <svg viewBox="0 0 200 200" className="w-full h-full overflow-visible">
                                                         <defs>
                                                             <radialGradient id="balloonGrad" cx="50%" cy="50%" r="50%"><stop offset="0%" stopColor="#ffffff" stopOpacity="0.9" /><stop offset="60%" stopColor="#C8102E" stopOpacity="0.5" /><stop offset="100%" stopColor="#8b0000" stopOpacity="0.8" /></radialGradient>
@@ -343,36 +364,20 @@
                                                         {/* ======================================================== */}
                                                         <g style={{ transition: 'transform 0.1s ease-out' }}>
                                                             
-                                                            {/* --- 1. 左半邊金屬環 (向左平移 -dx) --- */}
-                                                            {/* 左環延伸到 x=120，負責覆蓋中心以左及中心點右側的重疊區 */}
                                                             <g style={{ transform: `translateX(${-dx}px)` }}>
-                                                                {/* 底部：白色縫合環 */}
                                                                 <path d="M 120 22 L 100 22 A 78 78 0 0 0 100 178 L 120 178" fill="none" stroke="#f8fafc" strokeWidth="16" strokeLinecap="round" filter="drop-shadow(-2px 2px 2px rgba(0,0,0,0.1))" />
                                                                 <path d="M 120 22 L 100 22 A 78 78 0 0 0 100 178 L 120 178" fill="none" stroke="#cbd5e1" strokeWidth="1" strokeDasharray="4 4" strokeLinecap="round" />
-                                                                
-                                                                {/* 主體：鈷鉻合金金屬本體 */}
                                                                 <path d="M 120 32 L 100 32 A 68 68 0 0 0 100 168 L 120 168" fill="none" stroke="url(#metalGrad)" strokeWidth="12" strokeLinecap="round" filter="drop-shadow(-1px 2px 2px rgba(0,0,0,0.3))" />
-                                                                
-                                                                {/* 內部構造：黑色溝槽紋理 (模擬滑軌內側) */}
                                                                 <path d="M 105 32 L 116 32 M 105 168 L 116 168" fill="none" stroke="#1a0505" strokeWidth="3" strokeLinecap="round" opacity="0.7" />
                                                             </g>
 
-                                                            {/* --- 2. 右半邊金屬環 (向右平移 +dx) --- */}
-                                                            {/* 右環延伸到 x=80，負責覆蓋中心以右及中心點左側的重疊區 */}
-                                                            {/* 因為 Right 在 SVG 後方宣告，它會覆蓋在 Left 上方，完美形成連貫的金屬環錯覺 */}
                                                             <g style={{ transform: `translateX(${dx}px)` }}>
-                                                                {/* 底部：白色縫合環 */}
                                                                 <path d="M 80 22 L 100 22 A 78 78 0 0 1 100 178 L 80 178" fill="none" stroke="#f8fafc" strokeWidth="16" strokeLinecap="round" filter="drop-shadow(2px 2px 2px rgba(0,0,0,0.1))" />
                                                                 <path d="M 80 22 L 100 22 A 78 78 0 0 1 100 178 L 80 178" fill="none" stroke="#cbd5e1" strokeWidth="1" strokeDasharray="4 4" strokeLinecap="round" />
-                                                                
-                                                                {/* 主體：鈷鉻合金金屬本體 */}
                                                                 <path d="M 80 32 L 100 32 A 68 68 0 0 1 100 168 L 80 168" fill="none" stroke="url(#metalGrad)" strokeWidth="12" strokeLinecap="round" filter="drop-shadow(1px 2px 2px rgba(0,0,0,0.3))" />
-                                                                
-                                                                {/* 內部構造：黑色溝槽紋理 (模擬滑軌內側) */}
                                                                 <path d="M 84 32 L 95 32 M 84 168 L 95 168" fill="none" stroke="#1a0505" strokeWidth="3" strokeLinecap="round" opacity="0.7" />
                                                             </g>
 
-                                                            {/* --- 3. 中心擴張氣球與 TAVR 網狀支架 --- */}
                                                             <g style={{ opacity: 0.3 + innerOpacity * 0.7 }}>
                                                                 <circle cx="100" cy="100" r={25 + innerOpacity * 42} fill="url(#balloonGrad)" className={gameState === 'playing' ? 'animate-pulse' : ''} filter="drop-shadow(0px 0px 8px rgba(200,16,46,0.4))" />
                                                                 <g style={{ transform: `scale(${0.35 + innerOpacity * 0.65})`, transformOrigin: '100px 100px' }}>
@@ -383,16 +388,11 @@
                                                                 </g>
                                                             </g>
 
-                                                            {/* --- 4. 擴張分離指示箭頭 (動態浮現於縫隙中) --- */}
-                                                            {/* 只有當 dx > 20 (重疊完全脫離產生縫隙) 時，箭頭才會淡入顯示 */}
                                                             {isSeparated && (
                                                                 <g style={{ opacity: arrowOpacity, transition: 'opacity 0.2s ease-in' }}>
-                                                                    {/* 上方缺口指示箭頭 */}
                                                                     <line x1="90" y1="32" x2="110" y2="32" stroke="#C8102E" strokeWidth="1.5" strokeDasharray="2 2" />
                                                                     <polyline points="93,29 90,32 93,35" fill="none" stroke="#C8102E" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
                                                                     <polyline points="107,29 110,32 107,35" fill="none" stroke="#C8102E" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
-                                                                    
-                                                                    {/* 下方缺口指示箭頭 */}
                                                                     <line x1="90" y1="168" x2="110" y2="168" stroke="#C8102E" strokeWidth="1.5" strokeDasharray="2 2" />
                                                                     <polyline points="93,165 90,168 93,171" fill="none" stroke="#C8102E" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
                                                                     <polyline points="107,165 110,168 107,171" fill="none" stroke="#C8102E" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
