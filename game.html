@@ -20,7 +20,8 @@
             "react-dom/client": "https://esm.sh/react-dom@18.2.0/client",
             "firebase/app": "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js",
             "firebase/auth": "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js",
-            "firebase/firestore": "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js"
+            "firebase/firestore": "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js",
+            "firebase/analytics": "https://www.gstatic.com/firebasejs/10.8.0/firebase-analytics.js"
         }
     }
     </script>
@@ -39,22 +40,22 @@
         import { initializeApp } from 'firebase/app';
         import { getAuth, signInAnonymously, onAuthStateChanged } from 'firebase/auth';
         import { getFirestore, collection, addDoc, onSnapshot, query, orderBy, limit, doc, getDoc, setDoc } from 'firebase/firestore';
+        import { getAnalytics } from 'firebase/analytics';
 
         // ==========================================
-        // ⚠️ Firebase 設定 (選擇性)
-        // 您可以在此處填寫您的 Firebase Config 
-        // 如果留空，遊戲將自動以「單機模式」運行，不會報錯。
+        // ⚠️ Firebase 設定 (已啟用)
         // ==========================================
         const firebaseConfig = {
-            // apiKey: "YOUR_API_KEY",
-            // authDomain: "YOUR_PROJECT_ID.firebaseapp.com",
-            // projectId: "YOUR_PROJECT_ID",
-            // storageBucket: "YOUR_PROJECT_ID.appspot.com",
-            // messagingSenderId: "YOUR_SENDER_ID",
-            // appId: "YOUR_APP_ID"
+            apiKey: "AIzaSyA2i5zli07cm_Vde7zYPrlCrgCOkKQ3vf4",
+            authDomain: "game-test-fcec2.firebaseapp.com",
+            projectId: "game-test-fcec2",
+            storageBucket: "game-test-fcec2.firebasestorage.app",
+            messagingSenderId: "354396726740",
+            appId: "1:354396726740:web:52ece7a43fdafcfae8e241",
+            measurementId: "G-3EL98VRHF2"
         };
 
-        let app, auth, db;
+        let app, auth, db, analytics;
         let isFirebaseEnabled = false;
 
         try {
@@ -62,6 +63,7 @@
                 app = initializeApp(firebaseConfig);
                 auth = getAuth(app);
                 db = getFirestore(app);
+                analytics = getAnalytics(app);
                 isFirebaseEnabled = true;
             }
         } catch (e) {
