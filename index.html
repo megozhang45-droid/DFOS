@@ -165,7 +165,6 @@
                 <li><a href="#sec-8" class="toc-link block text-[13px] font-bold text-slate-500 hover:text-edwards-red transition-all pl-2 border-l-4 border-transparent hover:border-edwards-red" data-target="sec-8">八、線下整合深耕</a></li>
                 <li><a href="#sec-9" class="toc-link block text-[13px] font-bold text-slate-500 hover:text-edwards-red transition-all pl-2 border-l-4 border-transparent hover:border-edwards-red" data-target="sec-9">九、後續與戰略協作</a></li>
                 <li><a href="#sec-11" class="toc-link block text-[13px] font-bold text-slate-500 hover:text-edwards-red transition-all pl-2 border-l-4 border-transparent hover:border-edwards-red" data-target="sec-11">十一、結語</a></li>
-                <!-- ★ 注意這裡：改為 ./game.html -->
                 <li><a href="./game.html" class="block text-[13px] font-bold text-edwards-red mt-2 transition-all pl-2 border-l-4 border-transparent hover:border-edwards-red bg-red-50 p-1 rounded"><i class="fa-solid fa-gamepad mr-1"></i>十二、互動挑戰</a></li>
             </ul>
         </div>
@@ -196,7 +195,6 @@
                 <li><a href="#sec-8" class="block font-bold text-slate-600 active:text-edwards-red bg-white p-3 rounded-xl border-2 border-slate-200">八、線下整合深耕</a></li>
                 <li><a href="#sec-9" class="block font-bold text-slate-600 active:text-edwards-red bg-white p-3 rounded-xl border-2 border-slate-200">九、後續與戰略協作</a></li>
                 <li><a href="#sec-11" class="block font-bold text-slate-600 active:text-edwards-red bg-white p-3 rounded-xl border-2 border-slate-200">十一、結語</a></li>
-                <!-- ★ 注意這裡：改為 ./game.html -->
                 <li><a href="./game.html" class="block font-bold text-edwards-red active:text-edwards-red bg-red-50 p-3 rounded-xl border-2 border-edwards-red"><i class="fa-solid fa-gamepad mr-2"></i>十二、互動挑戰：全球保衛戰</a></li>
             </ul>
         </div>
@@ -520,32 +518,51 @@
             </div>
 
             <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
-                <!-- 5.1 -->
+                <!-- 5.1 媒體報導與新聞露出 (已更新為卡片預覽設計) -->
                 <div class="sketch-box shadow-[4px_4px_0_#898D8D]">
                     <h3 class="text-xl font-bold mb-6 border-b-2 border-edwards-ink pb-2"><i class="fa-solid fa-newspaper mr-2 text-edwards-red"></i>5.1 媒體報導與新聞露出</h3>
-                    <div class="flex flex-col gap-3">
-                        <a href="https://www.commonhealth.com.tw/article/93867" target="_blank" class="flex items-center p-3 border-2 border-edwards-ink rounded-xl hover:-translate-y-1 transition-transform bg-green-50 shadow-sm">
-                            <div class="w-10 h-10 bg-white rounded-full flex items-center justify-center border-2 border-edwards-ink mr-3 shrink-0">
-                                <i class="fa-solid fa-leaf text-green-600 text-lg"></i>
-                            </div>
-                            <div class="flex-grow">
-                                <div class="font-bold text-sm text-edwards-ink">康健雜誌</div>
-                                <div class="text-[10px] text-slate-500 font-bold">Web Article / 專文報導</div>
-                            </div>
-                            <i class="fa-solid fa-arrow-right text-edwards-gray"></i>
-                        </a>
+                    <div class="flex flex-col gap-4">
                         
-                        <a href="https://www.healthnews.com.tw/article/66344" target="_blank" class="flex items-center p-3 border-2 border-edwards-ink rounded-xl hover:-translate-y-1 transition-transform bg-teal-50 shadow-sm">
-                            <div class="w-10 h-10 bg-white rounded-full flex items-center justify-center border-2 border-edwards-ink mr-3 shrink-0">
-                                <i class="fa-solid fa-stethoscope text-teal-600 text-lg"></i>
-                            </div>
-                            <div class="flex-grow">
-                                <div class="font-bold text-sm text-edwards-ink">健康醫療網</div>
-                                <div class="text-[10px] text-slate-500 font-bold">Web Article / 新聞報導</div>
-                            </div>
-                            <i class="fa-solid fa-arrow-right text-edwards-gray"></i>
-                        </a>
+                        <!-- 網頁預覽圖 Grid -->
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                            <!-- 康健雜誌 Preview Card -->
+                            <a href="https://www.commonhealth.com.tw/article/93867" target="_blank" class="block border-2 border-edwards-ink rounded-xl overflow-hidden hover:-translate-y-1 transition-transform shadow-[3px_3px_0_#2D3436] bg-white group">
+                                <div class="h-32 overflow-hidden relative border-b-2 border-edwards-ink bg-slate-100">
+                                    <img src="https://v1.opengraph.11ty.dev/https%3A%2F%2Fwww.commonhealth.com.tw%2Farticle%2F93867/large/" 
+                                         alt="康健雜誌報導預覽圖" 
+                                         class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                                         referrerpolicy="no-referrer"
+                                         onerror="this.onerror=null; this.src='https://images.unsplash.com/photo-1551076805-e166946e0e54?q=80&w=600&auto=format&fit=crop';">
+                                    <div class="absolute top-2 left-2 bg-green-600/90 backdrop-blur-sm text-white text-[10px] px-2 py-0.5 rounded-full font-bold flex items-center gap-1 shadow-sm border border-green-400">
+                                        <i class="fa-solid fa-leaf"></i> 康健雜誌
+                                    </div>
+                                </div>
+                                <div class="p-3 bg-green-50/30">
+                                    <div class="font-bold text-sm text-edwards-ink mb-1 line-clamp-1">林岳平重生告白：最難跨越的不是勝負</div>
+                                    <div class="text-[10px] text-slate-500 font-medium line-clamp-2">「手術不是終點，而是起點」透過兩次手術生命實證，破除術後體力不支迷思。</div>
+                                </div>
+                            </a>
+                            
+                            <!-- 健康醫療網 Preview Card -->
+                            <a href="https://www.healthnews.com.tw/article/66344" target="_blank" class="block border-2 border-edwards-ink rounded-xl overflow-hidden hover:-translate-y-1 transition-transform shadow-[3px_3px_0_#2D3436] bg-white group">
+                                <div class="h-32 overflow-hidden relative border-b-2 border-edwards-ink bg-slate-100">
+                                    <img src="https://v1.opengraph.11ty.dev/https%3A%2F%2Fwww.healthnews.com.tw%2Farticle%2F66344/large/" 
+                                         alt="健康醫療網報導預覽圖" 
+                                         class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                                         referrerpolicy="no-referrer"
+                                         onerror="this.onerror=null; this.src='https://images.unsplash.com/photo-1576091160399-112ba8d25d1d?q=80&w=600&auto=format&fit=crop';">
+                                    <div class="absolute top-2 left-2 bg-teal-600/90 backdrop-blur-sm text-white text-[10px] px-2 py-0.5 rounded-full font-bold flex items-center gap-1 shadow-sm border border-teal-400">
+                                        <i class="fa-solid fa-stethoscope"></i> 健康醫療網
+                                    </div>
+                                </div>
+                                <div class="p-3 bg-teal-50/30">
+                                    <div class="font-bold text-sm text-edwards-ink mb-1 line-clamp-1">瓣膜置換手術新選擇，破解手術迷思</div>
+                                    <div class="text-[10px] text-slate-500 font-medium line-clamp-2">從數據看見台灣治療缺口，專業醫師帶您了解生物瓣膜與機械瓣膜的差異與選擇。</div>
+                                </div>
+                            </a>
+                        </div>
 
+                        <!-- 官方粉絲團貼文維持條列式作為輔助 -->
                         <a href="https://www.facebook.com/commonhealth/posts/pfbid0YjWMp7oHXbonDQuL4P5TBN8ism35xSy4mFxiYYZHecD64Y8PGktQSZrPDnAGbwjUl" target="_blank" class="flex items-center p-3 border-2 border-[#1877F2] rounded-xl hover:-translate-y-1 transition-transform bg-blue-50 shadow-[2px_2px_0_#1877F2]">
                             <div class="w-10 h-10 bg-[#1877F2] rounded-full flex items-center justify-center border-2 border-edwards-ink mr-3 shrink-0">
                                 <i class="fa-brands fa-facebook-f text-white text-xl"></i>
@@ -630,33 +647,75 @@
                     </div>
                 </div>
 
-                <!-- 5.3 -->
+                <!-- 5.3 官方與關鍵人物發文 (原生純文字卡片版型) -->
                 <div class="sketch-box shadow-[4px_4px_0_#898D8D]">
                     <h3 class="text-xl font-bold mb-6 border-b-2 border-edwards-ink pb-2"><i class="fa-solid fa-bullhorn mr-2 text-edwards-red"></i>5.3 官方與關鍵人物發文</h3>
-                    <div class="space-y-4">
-                        <a href="https://www.facebook.com/unilions/posts/pfbid02bEkhAjn5Jw5SGTigVxcwGXK8VBvDW9SHfPo7jYRgpV7a4fd7hbdL7KGY2au6xzxPl" target="_blank" class="block border-2 border-[#1877F2] rounded-xl p-4 bg-white relative hover:-translate-y-1 transition-transform shadow-[3px_3px_0_#1877F2]">
-                            <div class="flex items-center gap-3">
-                                <div class="w-10 h-10 rounded-full bg-orange-100 flex items-center justify-center border-2 border-edwards-ink shrink-0">
-                                    <i class="fa-solid fa-baseball-bat-ball text-orange-600"></i>
+                    
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <!-- 統一獅 Custom FB Text Card -->
+                        <a href="https://www.facebook.com/unilions/posts/pfbid02bEkhAjn5Jw5SGTigVxcwGXK8VBvDW9SHfPo7jYRgpV7a4fd7hbdL7KGY2au6xzxPl" target="_blank" class="block border-2 border-[#1877F2] rounded-xl overflow-hidden hover:-translate-y-1 transition-transform shadow-[3px_3px_0_#1877F2] bg-white group flex flex-col">
+                            <!-- 發文者標頭 -->
+                            <div class="flex items-center gap-3 p-4 border-b border-slate-100 bg-white">
+                                <div class="w-10 h-10 rounded-full bg-orange-100 overflow-hidden border-2 border-orange-300 shrink-0 flex items-center justify-center shadow-inner">
+                                    <span class="font-black text-orange-600 text-lg">獅</span>
                                 </div>
                                 <div>
-                                    <div class="font-bold text-sm text-[#1877F2]">統一獅官方粉絲團</div>
-                                    <div class="text-[10px] text-slate-500 font-bold">Facebook Post</div>
+                                    <div class="font-bold text-sm text-edwards-ink hover:underline flex items-center gap-1">統一獅官方粉絲團 <i class="fa-solid fa-circle-check text-[#1877F2] text-[10px]"></i></div>
+                                    <div class="text-[10px] text-slate-500 font-medium flex items-center gap-1">4月14日下午2:32 <i class="fa-solid fa-earth-americas"></i></div>
                                 </div>
-                                <i class="fa-brands fa-facebook text-[#1877F2] text-2xl ml-auto"></i>
+                                <i class="fa-brands fa-facebook text-[#1877F2] text-xl ml-auto"></i>
+                            </div>
+                            
+                            <!-- 貼文完整原始內文 -->
+                            <div class="p-5 text-[13px] text-slate-800 leading-relaxed bg-white flex-grow">
+                                還記得餅總林岳平經歷過的人生兩次重大手術嗎？<br>
+                                從球場上的救援王、一直到帶領球隊奮戰的總教練⚾️<br>
+                                餅總說：生命最難跨越的不是勝負，而是⋯兩次心臟開刀！<br><br>
+                                餅總用自己的故事與經歷<br>
+                                鼓勵與他一樣有先天性主動脈瓣閉鎖不全問題的病友<br>
+                                給予他們【為人生換上新的時間】的勇氣⏰<br><br>
+                                這是一堂關於醫療選擇、生命勇氣與希望的真實課題<br>
+                                而餅總也用過來人的心情來告訴大家<br>
+                                「現今的醫學真的很先進，只要正面看待自己的身體，人生，還是可以繼續走下去。」
+                            </div>
+                            
+                            <!-- 按讚分享互動列示意 -->
+                            <div class="bg-slate-50 p-3 border-t border-slate-200 flex justify-between text-slate-500 text-xs font-bold px-6">
+                                <span class="flex items-center gap-1 group-hover:text-[#1877F2] transition-colors"><i class="fa-regular fa-thumbs-up text-sm"></i> 讚</span>
+                                <span class="flex items-center gap-1 group-hover:text-[#1877F2] transition-colors"><i class="fa-regular fa-comment text-sm"></i> 留言</span>
+                                <span class="flex items-center gap-1 group-hover:text-[#1877F2] transition-colors"><i class="fa-solid fa-share text-sm"></i> 分享</span>
                             </div>
                         </a>
 
-                        <a href="https://www.facebook.com/bincoach11/posts/pfbid0msFEa2A1PSryaWghG9JnsebfaVtfNTiKyKTxSszxMq5SpFNdvu43tT369WeHhyuBl" target="_blank" class="block border-2 border-[#1877F2] rounded-xl p-4 bg-white relative hover:-translate-y-1 transition-transform shadow-[3px_3px_0_#1877F2]">
-                            <div class="flex items-center gap-3">
-                                <div class="w-10 h-10 rounded-full bg-red-100 flex items-center justify-center border-2 border-edwards-ink shrink-0">
-                                    <i class="fa-solid fa-user-tie text-red-600"></i>
+                        <!-- 餅總 Custom FB Text Card -->
+                        <a href="https://www.facebook.com/bincoach11/posts/pfbid0msFEa2A1PSryaWghG9JnsebfaVtfNTiKyKTxSszxMq5SpFNdvu43tT369WeHhyuBl" target="_blank" class="block border-2 border-[#1877F2] rounded-xl overflow-hidden hover:-translate-y-1 transition-transform shadow-[3px_3px_0_#1877F2] bg-white group flex flex-col">
+                            <!-- 發文者標頭 -->
+                            <div class="flex items-center gap-3 p-4 border-b border-slate-100 bg-white">
+                                <div class="w-10 h-10 rounded-full bg-slate-800 overflow-hidden border-2 border-slate-600 shrink-0 flex items-center justify-center shadow-inner">
+                                    <span class="font-bold text-white text-[17px]">餅</span>
                                 </div>
                                 <div>
-                                    <div class="font-bold text-sm text-[#1877F2]">餅總 (林岳平)</div>
-                                    <div class="text-[10px] text-slate-500 font-bold">Facebook Post</div>
+                                    <div class="font-bold text-sm text-edwards-ink hover:underline">林岳平「餅總」粉絲團</div>
+                                    <div class="text-[10px] text-slate-500 font-medium flex items-center gap-1">4月16日下午5:27 <i class="fa-solid fa-earth-americas"></i></div>
                                 </div>
-                                <i class="fa-brands fa-facebook text-[#1877F2] text-2xl ml-auto"></i>
+                                <i class="fa-brands fa-facebook text-[#1877F2] text-xl ml-auto"></i>
+                            </div>
+                            
+                            <!-- 貼文完整原始內文 -->
+                            <div class="p-5 text-[13px] text-slate-800 leading-relaxed bg-white flex-grow">
+                                回想這兩次心臟瓣膜的手術，心中總是五味雜陳。那是一段經歷過，才能了解的感受。<br><br>
+                                面對疾病，選擇接受治療需要很大的決心。我很慶幸當初的自己沒有逃避，感謝我太太一路上支持我、陪伴我，更感謝她幫我撐起整個家。<br><br>
+                                現代醫學真的很發達。想把這個故事分享給正在面臨健康挑戰的朋友：給自己一次機會，勇敢面對，只要正面看待自己的身體，人生依然可以很精彩。<br><br>
+                                ✨這不只是運動員的故事，而是一堂關於 醫療選擇、生命勇氣與希望 的真實課。✨<br>
+                                👉 點進 <span class="text-blue-600 font-medium hover:underline break-all">https://www.dontfearofsurgery.com/event-page</span> ℹ️<br>
+                                看林岳平完整故事，了解心臟瓣膜置換的治療選擇與醫師解析📖
+                            </div>
+                            
+                            <!-- 按讚分享互動列示意 -->
+                            <div class="bg-slate-50 p-3 border-t border-slate-200 flex justify-between text-slate-500 text-xs font-bold px-6">
+                                <span class="flex items-center gap-1 group-hover:text-[#1877F2] transition-colors"><i class="fa-regular fa-thumbs-up text-sm"></i> 讚</span>
+                                <span class="flex items-center gap-1 group-hover:text-[#1877F2] transition-colors"><i class="fa-regular fa-comment text-sm"></i> 留言</span>
+                                <span class="flex items-center gap-1 group-hover:text-[#1877F2] transition-colors"><i class="fa-solid fa-share text-sm"></i> 分享</span>
                             </div>
                         </a>
                     </div>
@@ -875,7 +934,6 @@
             </h2>
             <p class="text-lg text-slate-600 font-bold mb-8">全球瓣膜保衛戰 - 20秒極限挑戰已獨立開啟新頁面！</p>
             
-            <!-- ★ 注意這裡：改為 ./game.html -->
             <a href="./game.html" class="sketch-btn text-2xl py-4 px-8 animate-bounce inline-flex">
                 <i class="fa-solid fa-bolt mr-3"></i> 立即前往挑戰
             </a>
