@@ -1,495 +1,431 @@
-import React, { useState, useEffect, useRef } from 'react';
-import { initializeApp } from 'firebase/app';
-import { getAuth, signInAnonymously, onAuthStateChanged, signInWithCustomToken } from 'firebase/auth';
-import { getFirestore, collection, addDoc, onSnapshot, query, orderBy, limit, doc, getDoc, setDoc } from 'firebase/firestore';
-import { Loader2, HeartPulse, User, Trophy, Clock, MousePointerClick, ArrowLeft } from 'lucide-react';
-
-// --- Firebase Configuration & Initialization ---
-const firebaseConfig = typeof __firebase_config !== 'undefined' ? JSON.parse(__firebase_config) : {};
-const app = initializeApp(firebaseConfig);
-const auth = getAuth(app);
-const db = getFirestore(app);
-const appId = typeof __app_id !== 'undefined' ? __app_id : 'default-app-id';
-const COLL_NAME = 'vfit_speed_challenge';
-
-// --- Common Sketch Styles ---
-const sketchFont = { fontFamily: "'Kalam', 'Noto Sans TC', cursive" };
-const boxStylePrimary = "bg-white border-4 border-[#2D3436] rounded-[255px_15px_225px_15px/15px_225px_15px_255px] shadow-[6px_6px_0_#C8102E] transition-all hover:-translate-y-1 hover:shadow-[8px_8px_0_rgba(200,16,46,0.2)]";
-const boxStyleSecondary = "bg-white border-2 border-[#2D3436] rounded-[15px_255px_15px_225px/225px_15px_255px_15px] shadow-[4px_4px_0_#898D8D]";
-const btnStyle = "bg-[#C8102E] disabled:bg-gray-400 disabled:shadow-none disabled:transform-none disabled:cursor-not-allowed text-white font-bold py-3 px-6 border-2 border-[#2D3436] rounded-[15px_225px_15px_255px/255px_15px_225px_15px] shadow-[3px_3px_0_#2D3436] active:translate-y-[2px] active:translate-x-[2px] active:shadow-[1px_1px_0_#2D3436] transition-all";
-
-// --- Main App Component ---
-export default function App() {
-  const [user, setUser] = useState(null);
-  const [nickname, setNickname] = useState('');
-  const [gameState, setGameState] = useState('loading'); // 'loading', 'login', 'playing', 'finished'
-  const [clicks, setClicks] = useState(0);
-  const [time, setTime] = useState(0);
-  const [bestTime, setBestTime] = useState(null);
-  const [leaderboard, setLeaderboard] = useState([]);
-  const [canPlayAgain, setCanPlayAgain] = useState(false); // 防誤觸冷卻狀態
-  const timerRef = useRef(null);
-  const valveRef = useRef(null);
-
-  const TARGET_CLICKS = 100;
-
-  // Load custom fonts
-  useEffect(() => {
-    const link = document.createElement('link');
-    link.href = 'https://fonts.googleapis.com/css2?family=Kalam:wght@400;700&family=Noto+Sans+TC:wght@400;700;900&display=swap';
-    link.rel = 'stylesheet';
-    document.head.appendChild(link);
-  }, []);
-
-  // --- Firebase Auth & Data Sync ---
-  useEffect(() => {
-    const initAuth = async () => {
-      try {
-        if (typeof __initial_auth_token !== 'undefined' && __initial_auth_token) {
-          await signInWithCustomToken(auth, __initial_auth_token);
-        } else {
-          await signInAnonymously(auth);
-        }
-      } catch (error) {
-        console.error("Auth error:", error);
-      }
-    };
-    initAuth();
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>VFit Expansion Challenge | Edwards Lifesciences</title>
     
-    const unsubscribe = onAuthStateChanged(auth, (u) => {
-      setUser(u);
-      setGameState(u ? 'login' : 'loading');
-    });
-    return () => unsubscribe();
-  }, []);
-
-  useEffect(() => {
-    if (!user) return;
-
-    // Load personal best
-    const loadBestTime = async () => {
-      try {
-        const docRef = doc(db, 'artifacts', appId, 'users', user.uid, COLL_NAME, 'best');
-        const docSnap = await getDoc(docRef);
-        if (docSnap.exists()) {
-          setBestTime(docSnap.data().time);
-        }
-      } catch (e) {
-        console.error("Error loading best time:", e);
-      }
-    };
-    loadBestTime();
-
-    // Real-time leaderboard sync
-    const q = query(
-      collection(db, 'artifacts', appId, 'public', 'data', COLL_NAME),
-      orderBy('time', 'asc'),
-      limit(20)
-    );
-    const unsubscribe = onSnapshot(q, (snapshot) => {
-      const data = snapshot.docs.map(doc => doc.data());
-      setLeaderboard(data);
-    }, (error) => console.error("Leaderboard sync error:", error));
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
     
-    return () => unsubscribe();
-  }, [user]);
+    <!-- FontAwesome & Google Fonts -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Kalam:wght@400;700&family=Noto+Sans+TC:wght@400;700;900&display=swap" rel="stylesheet">
 
-  // --- Game Logic ---
-  const startGame = () => {
-    if (nickname.trim() === '') return;
-    setGameState('playing');
-    setClicks(0);
-    setTime(0);
-    setCanPlayAgain(false);
-    clearInterval(timerRef.current);
-    timerRef.current = setInterval(() => {
-      setTime(t => t + 10); // 10ms per tick
-    }, 10);
-  };
-
-  const handleValveClick = (e) => {
-    if (gameState !== 'playing') return;
-
-    const newClicks = clicks + 1;
-    setClicks(newClicks);
-
-    // Click effect
-    if (valveRef.current) {
-      const rect = valveRef.current.getBoundingClientRect();
-      const x = e.clientX - rect.left;
-      const y = e.clientY - rect.top;
-      createClickEffect(x, y);
+    <!-- Import Maps for React & Firebase -->
+    <script type="importmap">
+    {
+        "imports": {
+            "react": "https://esm.sh/react@18.2.0",
+            "react-dom/client": "https://esm.sh/react-dom@18.2.0/client",
+            "firebase/app": "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js",
+            "firebase/auth": "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js",
+            "firebase/firestore": "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js"
+        }
     }
+    </script>
+    
+    <!-- Babel Standalone (Transpiles JSX in the browser) -->
+    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+</head>
+<body class="antialiased overflow-x-hidden">
+    
+    <!-- React 應用的掛載點 -->
+    <div id="root"></div>
 
-    if (newClicks >= TARGET_CLICKS) {
-      endGame();
-    }
-  };
+    <script type="text/babel" data-type="module">
+        import React, { useState, useEffect, useRef } from 'react';
+        import { createRoot } from 'react-dom/client';
+        import { initializeApp } from 'firebase/app';
+        import { getAuth, signInAnonymously, onAuthStateChanged } from 'firebase/auth';
+        import { getFirestore, collection, addDoc, onSnapshot, query, orderBy, limit, doc, getDoc, setDoc } from 'firebase/firestore';
 
-  const endGame = async () => {
-    clearInterval(timerRef.current);
-    setGameState('finished');
+        // ==========================================
+        // ⚠️ Firebase 設定 (選擇性)
+        // 您可以在此處填寫您的 Firebase Config 
+        // 如果留空，遊戲將自動以「單機模式」運行，不會報錯。
+        // ==========================================
+        const firebaseConfig = {
+            // apiKey: "YOUR_API_KEY",
+            // authDomain: "YOUR_PROJECT_ID.firebaseapp.com",
+            // projectId: "YOUR_PROJECT_ID",
+            // storageBucket: "YOUR_PROJECT_ID.appspot.com",
+            // messagingSenderId: "YOUR_SENDER_ID",
+            // appId: "YOUR_APP_ID"
+        };
 
-    // 啟動 1.5 秒防誤觸冷卻
-    setTimeout(() => {
-      setCanPlayAgain(true);
-    }, 1500);
+        let app, auth, db;
+        let isFirebaseEnabled = false;
 
-    // Save personal best
-    if (!bestTime || time < bestTime) {
-      setBestTime(time);
-      try {
-        await setDoc(doc(db, 'artifacts', appId, 'users', user.uid, COLL_NAME, 'best'), { time });
-      } catch (e) { console.error("Error saving personal best:", e); }
-    }
+        try {
+            if (Object.keys(firebaseConfig).length > 0 && firebaseConfig.apiKey) {
+                app = initializeApp(firebaseConfig);
+                auth = getAuth(app);
+                db = getFirestore(app);
+                isFirebaseEnabled = true;
+            }
+        } catch (e) {
+            console.error("Firebase 初始化失敗:", e);
+        }
 
-    // Save to public leaderboard
-    try {
-      await addDoc(collection(db, 'artifacts', appId, 'public', 'data', COLL_NAME), {
-        name: nickname,
-        time: time,
-        date: new Date().toISOString(),
-        uid: user.uid
-      });
-    } catch (e) { console.error("Error saving score:", e); }
-  };
+        const COLL_NAME = 'vfit_speed_challenge';
+        const appId = 'edwards-vfit-game';
 
-  const formatTime = (ms) => (ms / 1000).toFixed(2) + 's';
+        // --- Common Sketch Styles ---
+        const sketchFont = { fontFamily: "'Kalam', 'Noto Sans TC', cursive" };
+        const boxStylePrimary = "bg-white border-4 border-[#2D3436] rounded-[255px_15px_225px_15px/15px_225px_15px_255px] shadow-[6px_6px_0_#C8102E] transition-all hover:-translate-y-1 hover:shadow-[8px_8px_0_rgba(200,16,46,0.2)]";
+        const boxStyleSecondary = "bg-white border-2 border-[#2D3436] rounded-[15px_255px_15px_225px/225px_15px_255px_15px] shadow-[4px_4px_0_#898D8D]";
+        const btnStyle = "bg-[#C8102E] disabled:bg-gray-400 disabled:shadow-none disabled:transform-none disabled:cursor-not-allowed text-white font-bold py-3 px-6 border-2 border-[#2D3436] rounded-[15px_225px_15px_255px/255px_15px_225px_15px] shadow-[3px_3px_0_#2D3436] active:translate-y-[2px] active:translate-x-[2px] active:shadow-[1px_1px_0_#2D3436] transition-all";
 
-  const formatEntryDate = (isoString) => {
-    const d = new Date(isoString);
-    const pad = (n) => n.toString().padStart(2, '0');
-    return `${pad(d.getMonth() + 1)}/${pad(d.getDate())} ${pad(d.getHours())}:${pad(d.getMinutes())}:${pad(d.getSeconds())}`;
-  };
+        // --- Main App Component ---
+        function App() {
+            const [user, setUser] = useState(null);
+            const [nickname, setNickname] = useState('');
+            const [gameState, setGameState] = useState('loading'); // 'loading', 'login', 'playing', 'finished'
+            const [clicks, setClicks] = useState(0);
+            const [time, setTime] = useState(0);
+            const [bestTime, setBestTime] = useState(null);
+            const [leaderboard, setLeaderboard] = useState([]);
+            const [localLeaderboard, setLocalLeaderboard] = useState([]); // 單機模式用
+            const [canPlayAgain, setCanPlayAgain] = useState(false);
+            const timerRef = useRef(null);
+            const valveRef = useRef(null);
 
-  const createClickEffect = (x, y) => {
-    const el = document.createElement('div');
-    el.className = 'absolute pointer-events-none text-[#C8102E] font-bold text-2xl animate-[ping_1s_cubic-bezier(0,0,0.2,1)_infinite] z-50';
-    el.style.left = `${x}px`;
-    el.style.top = `${y}px`;
-    el.style.fontFamily = "'Kalam', 'Noto Sans TC', cursive";
-    el.innerText = '+1';
-    valveRef.current.appendChild(el);
-    setTimeout(() => el.remove(), 600);
-  };
+            const TARGET_CLICKS = 100;
 
-  // --- Vfit Valve Visuals ---
-  // 設定最大擴張距離 (像素)
-  const MAX_EXPANSION = 26; 
-  const expansionDistance = (clicks / TARGET_CLICKS) * MAX_EXPANSION;
-  const innerOpacity = clicks / TARGET_CLICKS;
+            // --- Init & Auth ---
+            useEffect(() => {
+                if (!isFirebaseEnabled) {
+                    // 單機模式模擬登入
+                    setUser({ uid: 'local-' + Math.random().toString(36).substr(2, 9) });
+                    setTimeout(() => setGameState('login'), 800);
+                    return;
+                }
 
-  // --- UI Components ---
-  if (gameState === 'loading') {
-    return (
-      <div className="flex flex-col items-center justify-center h-screen bg-[#FDFBF7]" style={{ backgroundImage: 'radial-gradient(#d5d0ce 1px, transparent 1px)', backgroundSize: '20px 20px' }}>
-        <Loader2 className="w-16 h-16 text-[#C8102E] animate-[spin_3s_linear_infinite] mb-4" />
-        <p className="font-bold text-xl text-[#2D3436]" style={sketchFont}>正在連接總部...</p>
-      </div>
-    );
-  }
+                const initAuth = async () => {
+                    try { await signInAnonymously(auth); } 
+                    catch (error) { console.error("Auth error:", error); }
+                };
+                initAuth();
+                
+                const unsubscribe = onAuthStateChanged(auth, (u) => {
+                    setUser(u);
+                    setGameState(u ? 'login' : 'loading');
+                });
+                return () => unsubscribe();
+            }, []);
 
-  return (
-    <div className="flex flex-col min-h-screen text-[#2D3436] relative overflow-hidden" style={{ fontFamily: "'Noto Sans TC', sans-serif" }}>
-      {/* Sketchy Background Pattern */}
-      <div className="fixed inset-0 z-[-1]" style={{ backgroundColor: '#FDFBF7', backgroundImage: 'radial-gradient(#d5d0ce 1px, transparent 1px)', backgroundSize: '20px 20px' }}></div>
-      
-      {/* Decorative Doodles (From report) */}
-      <svg className="absolute top-10 left-10 md:left-32 w-10 h-10 text-yellow-400 opacity-80 z-0 animate-[bounce_3s_ease-in-out_infinite]" viewBox="0 0 100 100" fill="none" stroke="currentColor" strokeWidth="4" strokeLinecap="round" strokeLinejoin="round">
-          <path d="M50 10 L60 40 L90 40 L65 60 L75 90 L50 70 L25 90 L35 60 L10 40 L40 40 Z" />
-      </svg>
-      <svg className="absolute top-20 right-10 md:right-32 w-10 h-10 text-[#C8102E] opacity-60 z-0 animate-[bounce_4s_ease-in-out_infinite]" viewBox="0 0 100 100" fill="none" stroke="currentColor" strokeWidth="5" strokeLinecap="round" strokeLinejoin="round">
-          <path d="M60 10 L20 50 L50 50 L40 90 L80 40 L50 40 Z" />
-      </svg>
+            // --- Data Sync ---
+            useEffect(() => {
+                if (!user || !isFirebaseEnabled) return;
 
-      <header className="w-full bg-white/90 backdrop-blur-md border-b-[3px] border-[#2D3436] shadow-[0_4px_0_rgba(200,16,46,0.15)] p-4 flex justify-between items-center sticky top-0 z-50">
-        <div className="flex items-center gap-3">
-          <img 
-            className="h-8 object-contain" 
-            src="https://lh3.googleusercontent.com/d/1QJl_AerGZd0jRqOIZY-rCVVe6U67pmJM" 
-            alt="Edwards Logo" 
-            referrerPolicy="no-referrer"
-            onError={(e) => { e.target.onerror = null; e.target.src = 'https://upload.wikimedia.org/wikipedia/commons/4/4b/Edwards_Lifesciences.svg'; }}
-          />
-          <span className="font-bold text-[#2D3436] hidden sm:inline border-l-2 border-[#2D3436] pl-3 py-1 leading-loose overflow-visible" style={sketchFont}>VFit 極速擴張挑戰</span>
-        </div>
-        
-        <a 
-          href="./index.html" 
-          className="flex items-center gap-2 bg-[#FDFBF7] text-[#2D3436] font-bold border-2 border-[#2D3436] px-4 py-1.5 rounded-[255px_15px_225px_15px/15px_225px_15px_255px] shadow-[2px_2px_0_#2D3436] hover:-translate-y-0.5 hover:shadow-[4px_4px_0_#C8102E] hover:border-[#C8102E] hover:text-[#C8102E] transition-all active:translate-y-0.5 active:shadow-none"
-          style={sketchFont}
-        >
-          <ArrowLeft className="w-5 h-5" />
-          <span className="hidden sm:inline pt-1">返回</span>
-        </a>
-      </header>
+                const loadBestTime = async () => {
+                    try {
+                        const docRef = doc(db, 'artifacts', appId, 'users', user.uid, COLL_NAME, 'best');
+                        const docSnap = await getDoc(docRef);
+                        if (docSnap.exists()) setBestTime(docSnap.data().time);
+                    } catch (e) { console.error(e); }
+                };
+                loadBestTime();
 
-      <main className="flex-1 p-4 w-full max-w-6xl mx-auto flex flex-col items-center justify-center relative z-10 min-h-[calc(100vh-80px)]">
-        <div className="w-full flex flex-col items-center justify-center mt-4 md:mt-6">
-          
-          <div className="text-center mb-8 w-full relative">
-             <div className="absolute top-2 left-1/2 -translate-x-1/2 w-48 h-8 bg-red-200/50 rotate-[-2deg] mix-blend-multiply z-[-1] rounded-sm"></div>
-            <h1 className="text-4xl md:text-5xl font-bold text-[#2D3436] tracking-wide leading-[1.6] pt-6 pb-2 px-2 mb-2 overflow-visible" style={sketchFont}>
-              VFit Expansion Challenge
-            </h1>
-            <h2 className="text-xl font-bold text-[#898D8D] mt-2 inline-block px-3 py-1 leading-loose overflow-visible" style={{ ...sketchFont, background: 'linear-gradient(104deg, rgba(200,16,46,0) 0.9%, rgba(200,16,46,0.2) 2.4%, rgba(200,16,46,0.15) 5.8%, rgba(200,16,46,0.05) 93%, rgba(200,16,46,0) 96%)' }}>
-              目標：最快點擊 {TARGET_CLICKS} 下成功擴張！
-            </h2>
-          </div>
+                const q = query(collection(db, 'artifacts', appId, 'public', 'data', COLL_NAME), orderBy('time', 'asc'), limit(20));
+                const unsubscribe = onSnapshot(q, (snapshot) => {
+                    setLeaderboard(snapshot.docs.map(doc => doc.data()));
+                }, (error) => console.error(error));
+                
+                return () => unsubscribe();
+            }, [user]);
 
-          <div className="flex flex-col lg:flex-row gap-8 w-full justify-center items-stretch">
-            <div className="flex-1 max-w-md flex flex-col gap-6 w-full mx-auto">
-              
-              {/* Login State */}
-              {gameState === 'login' && (
-                <div className={`${boxStylePrimary} p-8 text-center bg-white`}>
-                  <div className="w-20 h-20 mx-auto bg-slate-50 border-2 border-[#2D3436] rounded-full flex items-center justify-center mb-6 shadow-sm transform -rotate-2">
-                    <User className="w-10 h-10 text-[#C8102E]" />
-                  </div>
-                  <h3 className="text-2xl font-bold mb-6 text-[#2D3436]" style={sketchFont}>報到！ViV 術者</h3>
-                  <input
-                    type="text"
-                    placeholder="輸入挑戰暱稱..."
-                    maxLength="10"
-                    value={nickname}
-                    onChange={(e) => setNickname(e.target.value)}
-                    className="border-2 border-[#2D3436] bg-[#FDFBF7] rounded-[15px_225px_15px_255px/255px_15px_225px_15px] px-4 py-3 w-full text-center text-lg font-bold focus:outline-none focus:border-[#C8102E] focus:shadow-[2px_2px_0_#C8102E] transition-all mb-6"
-                  />
-                  <button 
-                    onClick={startGame} 
-                    disabled={nickname.trim() === ''}
-                    className={`${btnStyle} w-full text-xl`}
-                    style={sketchFont}
-                  >
-                    開始挑戰
-                  </button>
-                </div>
-              )}
+            // --- Game Logic ---
+            const startGame = () => {
+                if (nickname.trim() === '') return;
+                setGameState('playing');
+                setClicks(0);
+                setTime(0);
+                setCanPlayAgain(false);
+                clearInterval(timerRef.current);
+                timerRef.current = setInterval(() => {
+                    setTime(t => t + 10);
+                }, 10);
+            };
 
-              {/* Playing / Finished State */}
-              {(gameState === 'playing' || gameState === 'finished') && (
-                <div className={`${boxStylePrimary} p-6 relative bg-white flex flex-col overflow-hidden`}>
-                  
-                  {/* Top Bar (Name & Best Time) */}
-                  <div className="flex justify-between items-center mb-6 pb-4 border-b-2 border-dashed border-slate-300 relative z-20">
-                    <div className="flex items-center gap-2">
-                      <div className="w-8 h-8 rounded-full border-2 border-[#2D3436] bg-red-50 flex items-center justify-center">
-                        <User className="w-4 h-4 text-[#C8102E]" />
-                      </div>
-                      <span className="font-bold text-lg" style={sketchFont}>{nickname}</span>
+            const handleValveClick = (e) => {
+                if (gameState !== 'playing') return;
+
+                const newClicks = clicks + 1;
+                setClicks(newClicks);
+
+                if (valveRef.current) {
+                    const rect = valveRef.current.getBoundingClientRect();
+                    const x = e.clientX - rect.left;
+                    const y = e.clientY - rect.top;
+                    createClickEffect(x, y);
+                }
+
+                if (newClicks >= TARGET_CLICKS) endGame();
+            };
+
+            const endGame = async () => {
+                clearInterval(timerRef.current);
+                setGameState('finished');
+                setTimeout(() => setCanPlayAgain(true), 1500);
+
+                if (!bestTime || time < bestTime) {
+                    setBestTime(time);
+                    if (isFirebaseEnabled) {
+                        try { await setDoc(doc(db, 'artifacts', appId, 'users', user.uid, COLL_NAME, 'best'), { time }); } 
+                        catch (e) { console.error(e); }
+                    }
+                }
+
+                const newEntry = { name: nickname, time: time, date: new Date().toISOString(), uid: user.uid };
+
+                if (isFirebaseEnabled) {
+                    try { await addDoc(collection(db, 'artifacts', appId, 'public', 'data', COLL_NAME), newEntry); } 
+                    catch (e) { console.error(e); }
+                } else {
+                    setLocalLeaderboard(prev => {
+                        return [...prev, newEntry].sort((a, b) => a.time - b.time).slice(0, 20);
+                    });
+                }
+            };
+
+            const formatTime = (ms) => (ms / 1000).toFixed(2) + 's';
+            const formatEntryDate = (isoString) => {
+                const d = new Date(isoString);
+                const pad = (n) => n.toString().padStart(2, '0');
+                return `${pad(d.getMonth() + 1)}/${pad(d.getDate())} ${pad(d.getHours())}:${pad(d.getMinutes())}:${pad(d.getSeconds())}`;
+            };
+
+            const createClickEffect = (x, y) => {
+                const el = document.createElement('div');
+                el.className = 'absolute pointer-events-none text-[#C8102E] font-bold text-2xl animate-[ping_1s_cubic-bezier(0,0,0.2,1)_infinite] z-50';
+                el.style.left = `${x}px`;
+                el.style.top = `${y}px`;
+                el.style.fontFamily = "'Kalam', 'Noto Sans TC', cursive";
+                el.innerText = '+1';
+                valveRef.current.appendChild(el);
+                setTimeout(() => el.remove(), 600);
+            };
+
+            // Visual Constants
+            const MAX_EXPANSION = 26; 
+            const expansionDistance = (clicks / TARGET_CLICKS) * MAX_EXPANSION;
+            const innerOpacity = clicks / TARGET_CLICKS;
+            const displayLeaderboard = isFirebaseEnabled ? leaderboard : localLeaderboard;
+
+            if (gameState === 'loading') {
+                return (
+                    <div className="flex flex-col items-center justify-center h-screen bg-[#FDFBF7]" style={{ backgroundImage: 'radial-gradient(#d5d0ce 1px, transparent 1px)', backgroundSize: '20px 20px' }}>
+                        <i className="fa-solid fa-spinner fa-spin text-[#C8102E] text-5xl mb-4"></i>
+                        <p className="font-bold text-xl text-[#2D3436]" style={sketchFont}>正在連接總部...</p>
                     </div>
-                    {bestTime && (
-                      <div className="text-sm font-bold text-amber-700 bg-amber-50 border-2 border-amber-200 px-3 py-1 rounded-[255px_15px_225px_15px/15px_225px_15px_255px] transform rotate-2">
-                        最佳: {formatTime(bestTime)}
-                      </div>
-                    )}
-                  </div>
+                );
+            }
 
-                  {/* Dynamic UI Zone: Either Live Stats OR Finished Banner */}
-                  {gameState === 'playing' ? (
-                    <div className="flex justify-around items-center mb-8 relative z-20">
-                      <div className="text-center bg-slate-50 border-2 border-[#2D3436] p-3 rounded-[15px_225px_15px_255px/255px_15px_225px_15px] shadow-[2px_2px_0_#2D3436] min-w-[100px] transform -rotate-1">
-                        <Clock className="w-6 h-6 text-[#898D8D] mx-auto mb-1" />
-                        <div className="text-2xl font-black font-mono text-[#2D3436]">{formatTime(time)}</div>
-                      </div>
-                      <div className="text-center bg-red-50 border-2 border-[#C8102E] p-3 rounded-[255px_15px_225px_15px/15px_225px_15px_255px] shadow-[2px_2px_0_#C8102E] min-w-[100px] transform rotate-1 relative">
-                        <MousePointerClick className="w-6 h-6 text-[#C8102E] mx-auto mb-1 animate-[bounce_2s_infinite]" />
-                        <div className="text-3xl font-black text-[#C8102E] hand-font" style={sketchFont}>{clicks}</div>
-                        <div className="absolute -bottom-3 -right-2 text-xs font-bold text-white bg-[#2D3436] px-2 py-0.5 rounded-md">/ {TARGET_CLICKS}</div>
-                      </div>
-                    </div>
-                  ) : (
-                    <div className="flex flex-col items-center justify-center mb-8 relative z-20 bg-[#FDFBF7] border-4 border-[#2D3436] rounded-[15px_225px_15px_255px/255px_15px_225px_15px] p-4 shadow-[4px_4px_0_#C8102E] transform rotate-1 animate-[bounce_0.5s_ease-out]">
-                      <div className="flex items-center justify-center gap-4 mb-4 w-full">
-                        <Trophy className="w-12 h-12 text-amber-400 animate-bounce filter drop-shadow-[2px_2px_0_#2D3436]" />
-                        <div className="text-left">
-                          <h2 className="text-3xl font-black text-[#C8102E] mb-1" style={sketchFont}>擴張成功！</h2>
-                          <p className="text-base font-bold text-[#2D3436]">成績: <span className="text-[#C8102E] text-2xl ml-1 font-mono">{formatTime(time)}</span></p>
-                        </div>
-                      </div>
-                      
-                      {/* 防誤觸再次挑戰按鈕 */}
-                      <button 
-                        onClick={startGame} 
-                        disabled={!canPlayAgain}
-                        className={`${btnStyle} text-lg flex items-center justify-center gap-2 w-3/4 max-w-[250px] ${!canPlayAgain ? 'opacity-50 grayscale cursor-not-allowed' : 'opacity-100 hover:-translate-y-1'}`} 
-                        style={sketchFont}
-                      >
-                        <i className={`fa-solid ${canPlayAgain ? 'fa-rotate-right' : 'fa-hourglass-half animate-pulse'}`}></i> 
-                        {canPlayAgain ? '再次挑戰' : '冷卻中...'}
-                      </button>
-                    </div>
-                  )}
-
-                  {/* Valve Interaction Area (Always Visible) */}
-                  <div className="relative w-72 h-72 mx-auto mt-2 mb-6">
-                    <div
-                      ref={valveRef}
-                      onClick={handleValveClick}
-                      className={`absolute inset-0 select-none transition-transform active:scale-[0.98] z-10 flex items-center justify-center bg-white border-4 border-[#2D3436] rounded-full shadow-[inset_0_0_30px_rgba(0,0,0,0.05),8px_8px_0_rgba(200,16,46,0.15)] overflow-hidden group ${gameState === 'playing' ? 'cursor-pointer' : ''}`}
-                    >
-                      <svg viewBox="0 0 200 200" className="w-full h-full overflow-visible">
-                        <defs>
-                          <radialGradient id="balloonGrad" cx="50%" cy="50%" r="50%">
-                            <stop offset="0%" stopColor="#ffffff" stopOpacity="0.9" />
-                            <stop offset="60%" stopColor="#C8102E" stopOpacity="0.5" />
-                            <stop offset="100%" stopColor="#8b0000" stopOpacity="0.8" />
-                          </radialGradient>
-                          <linearGradient id="metalGrad" x1="0%" y1="0%" x2="100%" y2="100%">
-                            <stop offset="0%" stopColor="#e2e8f0" />
-                            <stop offset="30%" stopColor="#94a3b8" />
-                            <stop offset="50%" stopColor="#f8fafc" />
-                            <stop offset="70%" stopColor="#64748b" />
-                            <stop offset="100%" stopColor="#cbd5e1" />
-                          </linearGradient>
-                          <filter id="glow" x="-20%" y="-20%" width="140%" height="140%">
-                            <feGaussianBlur stdDeviation="3" result="blur" />
-                            <feComposite in="SourceGraphic" in2="blur" operator="over" />
-                          </filter>
-                        </defs>
-
-                        {/* Base Background Pattern */}
-                        <pattern id="valveGrid" width="20" height="20" patternUnits="userSpaceOnUse">
-                          <circle cx="2" cy="2" r="1.5" fill="#cbd5e1" opacity="0.6" />
-                        </pattern>
-                        <rect width="200" height="200" fill="url(#valveGrid)" />
-
-                        {/* ======================================================== */}
-                        {/* VFit Valve Realistic Sliding Mechanism SVG Construction */}
-                        {/* ======================================================== */}
-                        <g style={{ transition: 'transform 0.1s ease-out' }}>
-                          
-                          {/* --- LAYER 1: Left Group (Base rings & Dark Slots) --- */}
-                          <g style={{ transform: `translateX(-${expansionDistance/2}px)` }}>
-                            {/* Left Sewing Ring (Outer stitching base) */}
-                            <path d="M 100 22 A 78 78 0 0 0 100 178" fill="none" stroke="#f8fafc" strokeWidth="12" filter="drop-shadow(-2px 4px 4px rgba(0,0,0,0.15))" />
-                            <path d="M 100 22 A 78 78 0 0 0 100 178" fill="none" stroke="#cbd5e1" strokeWidth="1" strokeDasharray="4 4" />
-                            
-                            {/* Left Cobalt Chromium Stent Frame */}
-                            <path d="M 100 32 A 68 68 0 0 0 100 168" fill="none" stroke="url(#metalGrad)" strokeWidth="14" filter="drop-shadow(-2px 2px 2px rgba(0,0,0,0.3))" />
-                            
-                            {/* Top & Bottom Dark Cutouts (Forms the background of the slot) */}
-                            <rect x="80" y="25" width="55" height="14" rx="2" fill="#2A0808" />
-                            <rect x="80" y="161" width="55" height="14" rx="2" fill="#2A0808" />
-                          </g>
-
-                          {/* --- LAYER 2: Right Group (Slider Pins & Right Rings) --- */}
-                          <g style={{ transform: `translateX(${expansionDistance/2}px)` }}>
-                            {/* Right Sewing Ring */}
-                            <path d="M 100 22 A 78 78 0 0 1 100 178" fill="none" stroke="#f8fafc" strokeWidth="12" filter="drop-shadow(2px 4px 4px rgba(0,0,0,0.15))" />
-                            <path d="M 100 22 A 78 78 0 0 1 100 178" fill="none" stroke="#cbd5e1" strokeWidth="1" strokeDasharray="4 4" />
-                            
-                            {/* Right Cobalt Chromium Stent Frame */}
-                            <path d="M 100 32 A 68 68 0 0 1 100 168" fill="none" stroke="url(#metalGrad)" strokeWidth="14" filter="drop-shadow(2px 2px 2px rgba(0,0,0,0.3))" />
-                            
-                            {/* Top Slider Pin (Male part that fits in the slot) */}
-                            <rect x="75" y="28" width="45" height="8" rx="3" fill="url(#metalGrad)" filter="drop-shadow(0px 1px 1px rgba(0,0,0,0.5))" />
-                            <rect x="80" y="30" width="30" height="2" rx="1" fill="#cbd5e1" opacity="0.6" />
-                            
-                            {/* Bottom Slider Pin */}
-                            <rect x="75" y="164" width="45" height="8" rx="3" fill="url(#metalGrad)" filter="drop-shadow(0px 1px 1px rgba(0,0,0,0.5))" />
-                            <rect x="80" y="166" width="30" height="2" rx="1" fill="#cbd5e1" opacity="0.6" />
-                          </g>
-
-                          {/* --- LAYER 3: Left Group Top Casing (Covers the slider pins) --- */}
-                          <g style={{ transform: `translateX(-${expansionDistance/2}px)` }}>
-                            {/* Top Joint Slot Outer Shell */}
-                            <rect x="80" y="23" width="52" height="4" fill="url(#metalGrad)" />
-                            <rect x="80" y="37" width="52" height="4" fill="url(#metalGrad)" />
-                            <rect x="130" y="23" width="5" height="18" rx="2" fill="url(#metalGrad)" filter="drop-shadow(2px 0px 1px rgba(0,0,0,0.3))" />
-                            <circle cx="85" cy="32" r="1.5" fill="#2D3436" />
-                            
-                            {/* Bottom Joint Slot Outer Shell */}
-                            <rect x="80" y="159" width="52" height="4" fill="url(#metalGrad)" />
-                            <rect x="80" y="173" width="52" height="4" fill="url(#metalGrad)" />
-                            <rect x="130" y="159" width="5" height="18" rx="2" fill="url(#metalGrad)" filter="drop-shadow(2px 0px 1px rgba(0,0,0,0.3))" />
-                            <circle cx="85" cy="168" r="1.5" fill="#2D3436" />
-                          </g>
-
-                          {/* --- LAYER 4: Central THV Deployment (Balloon & Diamond Stent) --- */}
-                          <g style={{ opacity: 0.3 + innerOpacity * 0.7 }}>
-                            {/* Deployment Balloon */}
-                            <circle cx="100" cy="100" r={25 + innerOpacity * 42} fill="url(#balloonGrad)" className={gameState === 'playing' ? 'animate-pulse' : ''} filter="drop-shadow(0px 0px 8px rgba(200,16,46,0.4))" />
-                            
-                            {/* Inner THV Stent Frame (Realistic Diamond Mesh) */}
-                            <g style={{ transform: `scale(${0.35 + innerOpacity * 0.65})`, transformOrigin: '100px 100px' }}>
-                              <path d="M100 15 L120 30 L140 20 L155 40 L175 35 L170 55 L185 75 L165 90 L185 110 L165 125 L175 145 L155 140 L145 160 L125 150 L110 170 L100 155 L85 170 L70 150 L50 160 L40 140 L20 145 L30 125 L10 110 L30 90 L10 75 L25 55 L20 35 L40 40 L55 20 L75 30 Z" fill="none" stroke="url(#metalGrad)" strokeWidth="3.5" strokeLinejoin="round" filter="drop-shadow(0px 2px 1px rgba(0,0,0,0.4))" />
-                              <path d="M100 35 L115 50 L130 45 L140 60 L155 55 L150 70 L165 85 L145 95 L160 110 L145 120 L150 135 L135 130 L125 145 L110 135 L100 145 L85 135 L75 145 L60 130 L45 135 L50 120 L35 110 L50 95 L30 85 L45 70 L40 55 L55 60 L65 45 L80 50 Z" fill="none" stroke="url(#metalGrad)" strokeWidth="2.5" strokeLinejoin="round" />
-                              <path d="M100 15 L100 35 M185 75 L165 85 M100 170 L100 145 M10 110 L30 95 M175 35 L140 60 M145 160 L125 145 M30 125 L45 135 M40 40 L65 45" fill="none" stroke="url(#metalGrad)" strokeWidth="2" />
-                              <circle cx="100" cy="100" r="4" fill="#C8102E" className={gameState === 'playing' ? 'animate-ping' : ''} />
-                            </g>
-                          </g>
-
-                          {/* --- LAYER 5: Red Expansion Indicators (<-- -->) --- */}
-                          {clicks > 0 && (
-                            <g style={{ opacity: innerOpacity * 1.5 }}>
-                              {/* Top Indicators */}
-                              <path d="M 88 32 L 95 28 L 95 36 Z" fill="#C8102E" />
-                              <path d="M 112 32 L 105 28 L 105 36 Z" fill="#C8102E" />
-                              <line x1="95" y1="32" x2="105" y2="32" stroke="#C8102E" strokeWidth="2" strokeDasharray="2 2" />
-
-                              {/* Bottom Indicators */}
-                              <path d="M 88 168 L 95 164 L 95 172 Z" fill="#C8102E" />
-                              <path d="M 112 168 L 105 164 L 105 172 Z" fill="#C8102E" />
-                              <line x1="95" y1="168" x2="105" y2="168" stroke="#C8102E" strokeWidth="2" strokeDasharray="2 2" />
-                            </g>
-                          )}
-                        </g>
-                      </svg>
-                    </div>
-                  </div>
-                  
-                </div>
-              )}
-            </div>
-
-            {/* Leaderboard */}
-            <div className={`${boxStyleSecondary} flex-1 max-w-md lg:w-96 p-6 flex flex-col max-h-[600px] bg-white mx-auto w-full`}>
-              <div className="flex justify-center border-b-2 border-dashed border-slate-300 mb-4 pb-3">
-                <h3 className="text-2xl font-bold flex items-center gap-2 text-[#2D3436]" style={sketchFont}>
-                  <Trophy className="w-7 h-7 text-amber-500" />
-                  全球極速榜
-                </h3>
-              </div>
-              <div className="flex-1 overflow-y-auto pr-2 space-y-3 scrollbar-thin scrollbar-thumb-[#898D8D] scrollbar-track-slate-100">
-                {leaderboard.length === 0 ? (
-                  <div className="flex flex-col items-center justify-center h-full text-gray-400 opacity-60">
-                    <svg className="w-16 h-16 mb-2" viewBox="0 0 100 100" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round">
-                      <circle cx="50" cy="50" r="40" />
-                      <path d="M35 40 L45 40 M55 40 L65 40 M40 65 Q50 75 60 65" />
-                    </svg>
-                    <p className="text-center font-bold" style={sketchFont}>暫無紀錄，快來挑戰！</p>
-                  </div>
-                ) : (
-                  leaderboard.map((entry, index) => {
-                    const isMe = user && entry.uid === user.uid;
-                    const radiusStyle = index % 2 === 0 
-                      ? 'rounded-[255px_15px_225px_15px/15px_225px_15px_255px]' 
-                      : 'rounded-[15px_255px_15px_225px/225px_15px_255px_15px]';
+            return (
+                <div className="flex flex-col min-h-screen text-[#2D3436] relative overflow-hidden" style={{ fontFamily: "'Noto Sans TC', sans-serif" }}>
+                    <div className="fixed inset-0 z-[-1]" style={{ backgroundColor: '#FDFBF7', backgroundImage: 'radial-gradient(#d5d0ce 1px, transparent 1px)', backgroundSize: '20px 20px' }}></div>
                     
-                    return (
-                      <div key={index} className={`flex items-center p-3 border-2 ${isMe ? 'border-[#C8102E] bg-red-50 shadow-[3px_3px_0_#C8102E]' : 'border-[#2D3436] bg-white shadow-[2px_2px_0_#2D3436]'} ${radiusStyle} transition-transform hover:-translate-y-1`}>
-                        <div className={`w-10 h-10 rounded-full flex items-center justify-center font-bold mr-3 flex-shrink-0 border-2 ${index < 3 ? 'bg-amber-100 text-amber-600 border-amber-400 shadow-[2px_2px_0_#fbbf24]' : 'bg-slate-100 text-slate-500 border-[#898D8D]'}`} style={sketchFont}>
-                          {index + 1}
+                    <svg className="absolute top-10 left-10 md:left-32 w-10 h-10 text-yellow-400 opacity-80 z-0 animate-[bounce_3s_ease-in-out_infinite]" viewBox="0 0 100 100" fill="none" stroke="currentColor" strokeWidth="4" strokeLinecap="round" strokeLinejoin="round">
+                        <path d="M50 10 L60 40 L90 40 L65 60 L75 90 L50 70 L25 90 L35 60 L10 40 L40 40 Z" />
+                    </svg>
+                    <svg className="absolute top-20 right-10 md:right-32 w-10 h-10 text-[#C8102E] opacity-60 z-0 animate-[bounce_4s_ease-in-out_infinite]" viewBox="0 0 100 100" fill="none" stroke="currentColor" strokeWidth="5" strokeLinecap="round" strokeLinejoin="round">
+                        <path d="M60 10 L20 50 L50 50 L40 90 L80 40 L50 40 Z" />
+                    </svg>
+
+                    <header className="w-full bg-white/90 backdrop-blur-md border-b-[3px] border-[#2D3436] shadow-[0_4px_0_rgba(200,16,46,0.15)] p-4 flex justify-between items-center sticky top-0 z-50">
+                        <div className="flex items-center gap-3">
+                            <img className="h-8 object-contain" src="https://lh3.googleusercontent.com/d/1QJl_AerGZd0jRqOIZY-rCVVe6U67pmJM" alt="Edwards Logo" referrerPolicy="no-referrer" onError={(e) => { e.target.onerror = null; e.target.src = 'https://upload.wikimedia.org/wikipedia/commons/4/4b/Edwards_Lifesciences.svg'; }} />
+                            <span className="font-bold text-[#2D3436] hidden sm:inline border-l-2 border-[#2D3436] pl-3 py-1 leading-loose overflow-visible" style={sketchFont}>VFit 極速擴張挑戰</span>
                         </div>
-                        <div className="flex-grow truncate">
-                          <div className="font-bold flex items-center gap-2 text-lg text-[#2D3436]" style={sketchFont}>
-                            {entry.name} {isMe && <span className="text-xs text-white bg-[#C8102E] px-1.5 py-0.5 rounded shadow-sm font-sans">你</span>}
-                          </div>
-                          <div className="text-[11px] text-slate-400 font-bold">{formatEntryDate(entry.date)}</div>
+                        <a href="./index.html" className="flex items-center gap-2 bg-[#FDFBF7] text-[#2D3436] font-bold border-2 border-[#2D3436] px-4 py-1.5 rounded-[255px_15px_225px_15px/15px_225px_15px_255px] shadow-[2px_2px_0_#2D3436] hover:-translate-y-0.5 hover:shadow-[4px_4px_0_#C8102E] hover:border-[#C8102E] hover:text-[#C8102E] transition-all active:translate-y-0.5 active:shadow-none" style={sketchFont}>
+                            <i className="fa-solid fa-arrow-left"></i>
+                            <span className="hidden sm:inline pt-1">返回</span>
+                        </a>
+                    </header>
+
+                    <main className="flex-1 p-4 w-full max-w-6xl mx-auto flex flex-col items-center justify-center relative z-10 min-h-[calc(100vh-80px)]">
+                        <div className="w-full flex flex-col items-center justify-center mt-4 md:mt-6">
+                            
+                            <div className="text-center mb-8 w-full relative">
+                               <div className="absolute top-2 left-1/2 -translate-x-1/2 w-48 h-8 bg-red-200/50 rotate-[-2deg] mix-blend-multiply z-[-1] rounded-sm"></div>
+                                <h1 className="text-4xl md:text-5xl font-bold text-[#2D3436] tracking-wide leading-[1.6] pt-6 pb-2 px-2 mb-2 overflow-visible" style={sketchFont}>VFit Expansion Challenge</h1>
+                                <h2 className="text-xl font-bold text-[#898D8D] mt-2 inline-block px-3 py-1 leading-loose overflow-visible" style={{ ...sketchFont, background: 'linear-gradient(104deg, rgba(200,16,46,0) 0.9%, rgba(200,16,46,0.2) 2.4%, rgba(200,16,46,0.15) 5.8%, rgba(200,16,46,0.05) 93%, rgba(200,16,46,0) 96%)' }}>目標：最快點擊 {TARGET_CLICKS} 下成功擴張！</h2>
+                            </div>
+
+                            <div className="flex flex-col lg:flex-row gap-8 w-full justify-center items-stretch">
+                                <div className="flex-1 max-w-md flex flex-col gap-6 w-full mx-auto">
+                                    
+                                    {gameState === 'login' && (
+                                        <div className={`${boxStylePrimary} p-8 text-center bg-white`}>
+                                            <div className="w-20 h-20 mx-auto bg-slate-50 border-2 border-[#2D3436] rounded-full flex items-center justify-center mb-6 shadow-sm transform -rotate-2">
+                                                <i className="fa-solid fa-user text-[#C8102E] text-3xl"></i>
+                                            </div>
+                                            <h3 className="text-2xl font-bold mb-6 text-[#2D3436]" style={sketchFont}>報到！ViV 術者</h3>
+                                            {!isFirebaseEnabled && (
+                                                <div className="bg-amber-100 text-amber-800 text-xs font-bold p-2 mb-4 rounded-lg border-2 border-amber-300 transform rotate-1">⚡ 提示：目前為單機遊玩模式</div>
+                                            )}
+                                            <input type="text" placeholder="輸入挑戰暱稱..." maxLength="10" value={nickname} onChange={(e) => setNickname(e.target.value)} className="border-2 border-[#2D3436] bg-[#FDFBF7] rounded-[15px_225px_15px_255px/255px_15px_225px_15px] px-4 py-3 w-full text-center text-lg font-bold focus:outline-none focus:border-[#C8102E] focus:shadow-[2px_2px_0_#C8102E] transition-all mb-6" />
+                                            <button onClick={startGame} disabled={nickname.trim() === ''} className={`${btnStyle} w-full text-xl`} style={sketchFont}>開始挑戰</button>
+                                        </div>
+                                    )}
+
+                                    {(gameState === 'playing' || gameState === 'finished') && (
+                                        <div className={`${boxStylePrimary} p-6 relative bg-white flex flex-col overflow-hidden`}>
+                                            
+                                            <div className="flex justify-between items-center mb-6 pb-4 border-b-2 border-dashed border-slate-300 relative z-20">
+                                                <div className="flex items-center gap-2">
+                                                    <div className="w-8 h-8 rounded-full border-2 border-[#2D3436] bg-red-50 flex items-center justify-center">
+                                                        <i className="fa-solid fa-user text-[#C8102E] text-xs"></i>
+                                                    </div>
+                                                    <span className="font-bold text-lg" style={sketchFont}>{nickname}</span>
+                                                </div>
+                                                {bestTime && (
+                                                    <div className="text-sm font-bold text-amber-700 bg-amber-50 border-2 border-amber-200 px-3 py-1 rounded-[255px_15px_225px_15px/15px_225px_15px_255px] transform rotate-2">最佳: {formatTime(bestTime)}</div>
+                                                )}
+                                            </div>
+
+                                            {gameState === 'playing' ? (
+                                                <div className="flex justify-around items-center mb-8 relative z-20">
+                                                    <div className="text-center bg-slate-50 border-2 border-[#2D3436] p-3 rounded-[15px_225px_15px_255px/255px_15px_225px_15px] shadow-[2px_2px_0_#2D3436] min-w-[100px] transform -rotate-1">
+                                                        <i className="fa-regular fa-clock text-[#898D8D] text-2xl mx-auto mb-1 block"></i>
+                                                        <div className="text-2xl font-black font-mono text-[#2D3436]">{formatTime(time)}</div>
+                                                    </div>
+                                                    <div className="text-center bg-red-50 border-2 border-[#C8102E] p-3 rounded-[255px_15px_225px_15px/15px_225px_15px_255px] shadow-[2px_2px_0_#C8102E] min-w-[100px] transform rotate-1 relative">
+                                                        <i className="fa-solid fa-arrow-pointer text-[#C8102E] text-2xl mx-auto mb-1 block animate-[bounce_2s_infinite]"></i>
+                                                        <div className="text-3xl font-black text-[#C8102E] hand-font" style={sketchFont}>{clicks}</div>
+                                                        <div className="absolute -bottom-3 -right-2 text-xs font-bold text-white bg-[#2D3436] px-2 py-0.5 rounded-md">/ {TARGET_CLICKS}</div>
+                                                    </div>
+                                                </div>
+                                            ) : (
+                                                <div className="flex flex-col items-center justify-center mb-8 relative z-20 bg-[#FDFBF7] border-4 border-[#2D3436] rounded-[15px_225px_15px_255px/255px_15px_225px_15px] p-4 shadow-[4px_4px_0_#C8102E] transform rotate-1 animate-[bounce_0.5s_ease-out]">
+                                                    <div className="flex items-center justify-center gap-4 mb-4 w-full">
+                                                        <i className="fa-solid fa-trophy text-amber-400 text-5xl animate-bounce filter drop-shadow-[2px_2px_0_#2D3436]"></i>
+                                                        <div className="text-left">
+                                                            <h2 className="text-3xl font-black text-[#C8102E] mb-1" style={sketchFont}>擴張成功！</h2>
+                                                            <p className="text-base font-bold text-[#2D3436]">成績: <span className="text-[#C8102E] text-2xl ml-1 font-mono">{formatTime(time)}</span></p>
+                                                        </div>
+                                                    </div>
+                                                    <button onClick={startGame} disabled={!canPlayAgain} className={`${btnStyle} text-lg flex items-center justify-center gap-2 w-3/4 max-w-[250px] ${!canPlayAgain ? 'opacity-50 grayscale cursor-not-allowed' : 'opacity-100 hover:-translate-y-1'}`} style={sketchFont}>
+                                                        <i className={`fa-solid ${canPlayAgain ? 'fa-rotate-right' : 'fa-hourglass-half animate-pulse'}`}></i> {canPlayAgain ? '再次挑戰' : '冷卻中...'}
+                                                    </button>
+                                                </div>
+                                            )}
+
+                                            <div className="relative w-72 h-72 mx-auto mt-2 mb-6">
+                                                <div ref={valveRef} onClick={handleValveClick} className={`absolute inset-0 select-none transition-transform active:scale-[0.98] z-10 flex items-center justify-center bg-white border-4 border-[#2D3436] rounded-full shadow-[inset_0_0_30px_rgba(0,0,0,0.05),8px_8px_0_rgba(200,16,46,0.15)] overflow-hidden group ${gameState === 'playing' ? 'cursor-pointer' : ''}`}>
+                                                    <svg viewBox="0 0 200 200" className="w-full h-full overflow-visible">
+                                                        <defs>
+                                                            <radialGradient id="balloonGrad" cx="50%" cy="50%" r="50%"><stop offset="0%" stopColor="#ffffff" stopOpacity="0.9" /><stop offset="60%" stopColor="#C8102E" stopOpacity="0.5" /><stop offset="100%" stopColor="#8b0000" stopOpacity="0.8" /></radialGradient>
+                                                            <linearGradient id="metalGrad" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" stopColor="#e2e8f0" /><stop offset="30%" stopColor="#94a3b8" /><stop offset="50%" stopColor="#f8fafc" /><stop offset="70%" stopColor="#64748b" /><stop offset="100%" stopColor="#cbd5e1" /></linearGradient>
+                                                            <filter id="glow" x="-20%" y="-20%" width="140%" height="140%"><feGaussianBlur stdDeviation="3" result="blur" /><feComposite in="SourceGraphic" in2="blur" operator="over" /></filter>
+                                                        </defs>
+
+                                                        <pattern id="valveGrid" width="20" height="20" patternUnits="userSpaceOnUse"><circle cx="2" cy="2" r="1.5" fill="#cbd5e1" opacity="0.6" /></pattern>
+                                                        <rect width="200" height="200" fill="url(#valveGrid)" />
+
+                                                        <g style={{ transition: 'transform 0.1s ease-out' }}>
+                                                            <g style={{ transform: `translateX(-${expansionDistance/2}px)` }}>
+                                                                <path d="M 100 22 A 78 78 0 0 0 100 178" fill="none" stroke="#f8fafc" strokeWidth="12" filter="drop-shadow(-2px 4px 4px rgba(0,0,0,0.15))" />
+                                                                <path d="M 100 22 A 78 78 0 0 0 100 178" fill="none" stroke="#cbd5e1" strokeWidth="1" strokeDasharray="4 4" />
+                                                                <path d="M 100 32 A 68 68 0 0 0 100 168" fill="none" stroke="url(#metalGrad)" strokeWidth="14" filter="drop-shadow(-2px 2px 2px rgba(0,0,0,0.3))" />
+                                                                <rect x="80" y="25" width="55" height="14" rx="2" fill="#2A0808" />
+                                                                <rect x="80" y="161" width="55" height="14" rx="2" fill="#2A0808" />
+                                                            </g>
+
+                                                            <g style={{ transform: `translateX(${expansionDistance/2}px)` }}>
+                                                                <path d="M 100 22 A 78 78 0 0 1 100 178" fill="none" stroke="#f8fafc" strokeWidth="12" filter="drop-shadow(2px 4px 4px rgba(0,0,0,0.15))" />
+                                                                <path d="M 100 22 A 78 78 0 0 1 100 178" fill="none" stroke="#cbd5e1" strokeWidth="1" strokeDasharray="4 4" />
+                                                                <path d="M 100 32 A 68 68 0 0 1 100 168" fill="none" stroke="url(#metalGrad)" strokeWidth="14" filter="drop-shadow(2px 2px 2px rgba(0,0,0,0.3))" />
+                                                                <rect x="75" y="28" width="45" height="8" rx="3" fill="url(#metalGrad)" filter="drop-shadow(0px 1px 1px rgba(0,0,0,0.5))" />
+                                                                <rect x="80" y="30" width="30" height="2" rx="1" fill="#cbd5e1" opacity="0.6" />
+                                                                <rect x="75" y="164" width="45" height="8" rx="3" fill="url(#metalGrad)" filter="drop-shadow(0px 1px 1px rgba(0,0,0,0.5))" />
+                                                                <rect x="80" y="166" width="30" height="2" rx="1" fill="#cbd5e1" opacity="0.6" />
+                                                            </g>
+
+                                                            <g style={{ transform: `translateX(-${expansionDistance/2}px)` }}>
+                                                                <rect x="80" y="23" width="52" height="4" fill="url(#metalGrad)" />
+                                                                <rect x="80" y="37" width="52" height="4" fill="url(#metalGrad)" />
+                                                                <rect x="130" y="23" width="5" height="18" rx="2" fill="url(#metalGrad)" filter="drop-shadow(2px 0px 1px rgba(0,0,0,0.3))" />
+                                                                <circle cx="85" cy="32" r="1.5" fill="#2D3436" />
+                                                                <rect x="80" y="159" width="52" height="4" fill="url(#metalGrad)" />
+                                                                <rect x="80" y="173" width="52" height="4" fill="url(#metalGrad)" />
+                                                                <rect x="130" y="159" width="5" height="18" rx="2" fill="url(#metalGrad)" filter="drop-shadow(2px 0px 1px rgba(0,0,0,0.3))" />
+                                                                <circle cx="85" cy="168" r="1.5" fill="#2D3436" />
+                                                            </g>
+
+                                                            <g style={{ opacity: 0.3 + innerOpacity * 0.7 }}>
+                                                                <circle cx="100" cy="100" r={25 + innerOpacity * 42} fill="url(#balloonGrad)" className={gameState === 'playing' ? 'animate-pulse' : ''} filter="drop-shadow(0px 0px 8px rgba(200,16,46,0.4))" />
+                                                                <g style={{ transform: `scale(${0.35 + innerOpacity * 0.65})`, transformOrigin: '100px 100px' }}>
+                                                                    <path d="M100 15 L120 30 L140 20 L155 40 L175 35 L170 55 L185 75 L165 90 L185 110 L165 125 L175 145 L155 140 L145 160 L125 150 L110 170 L100 155 L85 170 L70 150 L50 160 L40 140 L20 145 L30 125 L10 110 L30 90 L10 75 L25 55 L20 35 L40 40 L55 20 L75 30 Z" fill="none" stroke="url(#metalGrad)" strokeWidth="3.5" strokeLinejoin="round" filter="drop-shadow(0px 2px 1px rgba(0,0,0,0.4))" />
+                                                                    <path d="M100 35 L115 50 L130 45 L140 60 L155 55 L150 70 L165 85 L145 95 L160 110 L145 120 L150 135 L135 130 L125 145 L110 135 L100 145 L85 135 L75 145 L60 130 L45 135 L50 120 L35 110 L50 95 L30 85 L45 70 L40 55 L55 60 L65 45 L80 50 Z" fill="none" stroke="url(#metalGrad)" strokeWidth="2.5" strokeLinejoin="round" />
+                                                                    <path d="M100 15 L100 35 M185 75 L165 85 M100 170 L100 145 M10 110 L30 95 M175 35 L140 60 M145 160 L125 145 M30 125 L45 135 M40 40 L65 45" fill="none" stroke="url(#metalGrad)" strokeWidth="2" />
+                                                                    <circle cx="100" cy="100" r="4" fill="#C8102E" className={gameState === 'playing' ? 'animate-ping' : ''} />
+                                                                </g>
+                                                            </g>
+
+                                                            {clicks > 0 && (
+                                                                <g style={{ opacity: innerOpacity * 1.5 }}>
+                                                                    <path d="M 88 32 L 95 28 L 95 36 Z" fill="#C8102E" />
+                                                                    <path d="M 112 32 L 105 28 L 105 36 Z" fill="#C8102E" />
+                                                                    <line x1="95" y1="32" x2="105" y2="32" stroke="#C8102E" strokeWidth="2" strokeDasharray="2 2" />
+                                                                    <path d="M 88 168 L 95 164 L 95 172 Z" fill="#C8102E" />
+                                                                    <path d="M 112 168 L 105 164 L 105 172 Z" fill="#C8102E" />
+                                                                    <line x1="95" y1="168" x2="105" y2="168" stroke="#C8102E" strokeWidth="2" strokeDasharray="2 2" />
+                                                                </g>
+                                                            )}
+                                                        </g>
+                                                    </svg>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    )}
+                                </div>
+
+                                <div className={`${boxStyleSecondary} flex-1 max-w-md lg:w-96 p-6 flex flex-col max-h-[600px] bg-white mx-auto w-full`}>
+                                    <div className="flex justify-center border-b-2 border-dashed border-slate-300 mb-4 pb-3">
+                                        <h3 className="text-2xl font-bold flex items-center gap-2 text-[#2D3436]" style={sketchFont}>
+                                            <i className="fa-solid fa-trophy text-amber-500"></i>
+                                            全球極速榜
+                                        </h3>
+                                    </div>
+                                    <div className="flex-1 overflow-y-auto pr-2 space-y-3 scrollbar-thin scrollbar-thumb-[#898D8D] scrollbar-track-slate-100">
+                                        {displayLeaderboard.length === 0 ? (
+                                            <div className="flex flex-col items-center justify-center h-full text-gray-400 opacity-60">
+                                                <i className="fa-solid fa-list-ol text-5xl mb-4"></i>
+                                                <p className="text-center font-bold" style={sketchFont}>暫無紀錄，快來挑戰！</p>
+                                            </div>
+                                        ) : (
+                                            displayLeaderboard.map((entry, index) => {
+                                                const isMe = user && entry.uid === user.uid;
+                                                const radiusStyle = index % 2 === 0 ? 'rounded-[255px_15px_225px_15px/15px_225px_15px_255px]' : 'rounded-[15px_255px_15px_225px/225px_15px_255px_15px]';
+                                                
+                                                return (
+                                                    <div key={index} className={`flex items-center p-3 border-2 ${isMe ? 'border-[#C8102E] bg-red-50 shadow-[3px_3px_0_#C8102E]' : 'border-[#2D3436] bg-white shadow-[2px_2px_0_#2D3436]'} ${radiusStyle} transition-transform hover:-translate-y-1`}>
+                                                        <div className={`w-10 h-10 rounded-full flex items-center justify-center font-bold mr-3 flex-shrink-0 border-2 ${index < 3 ? 'bg-amber-100 text-amber-600 border-amber-400 shadow-[2px_2px_0_#fbbf24]' : 'bg-slate-100 text-slate-500 border-[#898D8D]'}`} style={sketchFont}>{index + 1}</div>
+                                                        <div className="flex-grow truncate">
+                                                            <div className="font-bold flex items-center gap-2 text-lg text-[#2D3436]" style={sketchFont}>
+                                                                {entry.name} {isMe && <span className="text-xs text-white bg-[#C8102E] px-1.5 py-0.5 rounded shadow-sm font-sans">你</span>}
+                                                            </div>
+                                                            <div className="text-[11px] text-slate-400 font-bold">{formatEntryDate(entry.date)}</div>
+                                                        </div>
+                                                        <div className={`font-black text-xl font-mono ${isMe ? 'text-[#C8102E]' : 'text-[#2D3436]'}`}>{formatTime(entry.time)}</div>
+                                                    </div>
+                                                );
+                                            })
+                                        )}
+                                    </div>
+                                </div>
+                            </div>
                         </div>
-                        <div className={`font-black text-xl font-mono ${isMe ? 'text-[#C8102E]' : 'text-[#2D3436]'}`}>
-                          {formatTime(entry.time)}
-                        </div>
-                      </div>
-                    );
-                  })
-                )}
-              </div>
-            </div>
-          </div>
-        </div>
-      </main>
-    </div>
-  );
-}
+                    </main>
+                </div>
+            );
+        }
+
+        const root = createRoot(document.getElementById('root'));
+        root.render(<App />);
+    </script>
+</body>
+</html>
