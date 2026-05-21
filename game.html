@@ -265,7 +265,7 @@
 
                     <header className="w-full bg-white/90 backdrop-blur-md border-b-[3px] border-[#2D3436] shadow-[0_4px_0_rgba(200,16,46,0.15)] p-4 flex justify-between items-center sticky top-0 z-50">
                         <div className="flex items-center gap-3">
-                            <img className="h-8 object-contain" src="https://lh3.googleusercontent.com/d/1QJl_AerGZd0jRqOIZY-rCVVe6U67pmJM" alt="Edwards Logo" referrerPolicy="no-referrer" onError={(e) => { e.target.onerror = null; e.target.src = 'https://upload.wikimedia.org/wikipedia/commons/4/4b/Edwards_Lifesciences.svg'; }} />
+                            <img className="h-8 object-contain" src="https://lh3.googleusercontent.com/d/1YogtM01eYxAVYPdXYwdqrhau9uZlNIqU" alt="Edwards Logo" referrerPolicy="no-referrer" onError={(e) => { e.target.onerror = null; e.target.src = 'https://upload.wikimedia.org/wikipedia/commons/4/4b/Edwards_Lifesciences.svg'; }} />
                             <span className="font-bold text-[#2D3436] hidden sm:inline border-l-2 border-[#2D3436] pl-3 py-1 leading-loose overflow-visible" style={sketchFont}>VFit 極速擴張挑戰</span>
                         </div>
                         <a href="./index.html" className="flex items-center gap-2 bg-[#FDFBF7] text-[#2D3436] font-bold border-2 border-[#2D3436] px-4 py-1.5 rounded-[255px_15px_225px_15px/15px_225px_15px_255px] shadow-[2px_2px_0_#2D3436] hover:-translate-y-0.5 hover:shadow-[4px_4px_0_#C8102E] hover:border-[#C8102E] hover:text-[#C8102E] transition-all active:translate-y-0.5 active:shadow-none" style={sketchFont}>
@@ -287,14 +287,14 @@
                                 <div className="flex-1 max-w-md flex flex-col gap-6 w-full mx-auto">
                                     
                                     {gameState === 'login' && (
-                                        <div className={`${boxStylePrimary} p-8 text-center bg-white`}>
-                                            <div className="w-20 h-20 mx-auto bg-slate-50 border-2 border-[#2D3436] rounded-full flex items-center justify-center mb-6 shadow-sm transform -rotate-2">
-                                                <i className="fa-solid fa-user text-[#C8102E] text-3xl"></i>
-                                            </div>
-                                            <h3 className="text-2xl font-bold mb-6 text-[#2D3436]" style={sketchFont}>報到！ViV 術者</h3>
-                                            {!isFirebaseEnabled && (
-                                                <div className="bg-amber-100 text-amber-800 text-xs font-bold p-2 mb-4 rounded-lg border-2 border-amber-300 transform rotate-1">⚡ 提示：目前為單機遊玩模式</div>
-                                            )}
+                                    <div className={`${boxStylePrimary} p-8 text-center bg-white`}>
+                                        <div className="w-20 h-20 mx-auto bg-slate-50 border-2 border-[#2D3436] rounded-full flex items-center justify-center mb-6 shadow-sm transform -rotate-2">
+                                            <i className="fa-solid fa-user text-[#C8102E] text-3xl"></i>
+                                        </div>
+                                        <h3 className="text-2xl font-bold mb-6 text-[#2D3436]" style={sketchFont}>報到！</h3>
+                                        {!isFirebaseEnabled && (
+                                            <div className="bg-amber-100 text-amber-800 text-xs font-bold p-2 mb-4 rounded-lg border-2 border-amber-300 transform rotate-1">⚡ 提示：目前為單機遊玩模式</div>
+                                        )}
                                             <input type="text" placeholder="輸入挑戰暱稱..." maxLength="10" value={nickname} onChange={(e) => setNickname(e.target.value)} onKeyDown={(e) => e.key === 'Enter' && nickname.trim() !== '' && startGame()} className="border-2 border-[#2D3436] bg-[#FDFBF7] rounded-[15px_225px_15px_255px/255px_15px_225px_15px] px-4 py-3 w-full text-center text-lg font-bold focus:outline-none focus:border-[#C8102E] focus:shadow-[2px_2px_0_#C8102E] transition-all mb-6" />
                                             <button onClick={startGame} disabled={nickname.trim() === ''} className={`${btnStyle} w-full text-xl`} style={sketchFont}>開始挑戰</button>
                                         </div>
@@ -405,6 +405,7 @@
                                     )}
                                 </div>
 
+                                {}
                                 <div className={`${boxStyleSecondary} flex-1 max-w-md lg:w-96 p-6 flex flex-col max-h-[600px] bg-white mx-auto w-full`}>
                                     <div className="flex justify-center border-b-2 border-dashed border-slate-300 mb-4 pb-3">
                                         <h3 className="text-2xl font-bold flex items-center gap-2 text-[#2D3436]" style={sketchFont}>
