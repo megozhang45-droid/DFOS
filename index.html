@@ -228,7 +228,7 @@
         
         <div class="sketch-box mb-8 relative z-0">
             <img class="h-24 object-contain mx-auto mb-6" 
-                 src="https://lh3.googleusercontent.com/d/1QJl_AerGZd0jRqOIZY-rCVVe6U67pmJM" 
+                 src="https://lh3.googleusercontent.com/d/1YogtM01eYxAVYPdXYwdqrhau9uZlNIqU" 
                  alt="Edwards Logo" 
                  referrerpolicy="no-referrer"
                  onerror="this.onerror=null; this.src='https://upload.wikimedia.org/wikipedia/commons/4/4b/Edwards_Lifesciences.svg';">
@@ -333,18 +333,52 @@
 
                     <h3 class="text-xl font-bold mb-6 text-edwards-red border-b-2 border-dashed border-edwards-ink pb-2">🎯 TA層級</h3>
                     
-                    <div class="flex flex-col items-center gap-2 w-full px-4 mb-4">
-                        <div id="btn-funnel-top" onclick="changeFunnel('top')" class="w-full h-12 flex items-center justify-center cursor-pointer border-2 border-edwards-ink rounded-xl bg-slate-100 transition-all shadow-md scale-105">
-                            <span class="font-bold hand-font">Disease Awareness</span>
+                    <div class="flex flex-col items-center gap-3 w-full max-w-sm mx-auto mb-6">
+                        <!-- Top -->
+                        <div class="w-full relative group cursor-pointer transition-transform duration-300 hover:-translate-y-1" style="filter: drop-shadow(2px 0 0 #2D3436) drop-shadow(-2px 0 0 #2D3436) drop-shadow(0 2px 0 #2D3436) drop-shadow(0 -2px 0 #2D3436) drop-shadow(4px 4px 0 #898D8D);">
+                            <div id="btn-funnel-top" onclick="changeFunnel('top')" class="h-14 bg-white flex items-center justify-center transition-colors group-hover:bg-slate-50" style="clip-path: polygon(0 0, 100% 0, 92% 100%, 8% 100%);">
+                                <span class="font-bold hand-font text-edwards-ink text-[17px] tracking-wide">Disease Awareness</span>
+                            </div>
                         </div>
-                        <div id="btn-funnel-mid" onclick="changeFunnel('mid')" class="w-4/5 h-12 flex items-center justify-center cursor-pointer border-2 border-edwards-ink rounded-xl bg-slate-200 transition-all opacity-40 hover:opacity-100 hover:scale-105">
-                            <span class="font-bold hand-font">Patient Awareness</span>
+                        <!-- Mid -->
+                        <div class="w-[84%] relative group cursor-pointer transition-transform duration-300 hover:-translate-y-1" style="filter: drop-shadow(2px 0 0 #2D3436) drop-shadow(-2px 0 0 #2D3436) drop-shadow(0 2px 0 #2D3436) drop-shadow(0 -2px 0 #2D3436) drop-shadow(4px 4px 0 #898D8D);">
+                            <div id="btn-funnel-mid" onclick="changeFunnel('mid')" class="h-14 bg-slate-200 flex items-center justify-center transition-all opacity-50 group-hover:opacity-100 group-hover:bg-slate-100" style="clip-path: polygon(0 0, 100% 0, 90% 100%, 10% 100%);">
+                                <span class="font-bold hand-font text-edwards-ink text-[17px] tracking-wide">Patient Awareness</span>
+                            </div>
                         </div>
-                        <div id="btn-funnel-bot" onclick="changeFunnel('bot')" class="w-3/5 h-14 flex items-center justify-center cursor-pointer border-2 border-edwards-red rounded-xl bg-edwards-red text-white transition-all opacity-40 hover:opacity-100 hover:scale-105">
-                            <span class="font-bold text-xl hand-font text-white">Therapy Awareness</span>
+                        <!-- Bot -->
+                        <div class="w-[68%] relative group cursor-pointer transition-transform duration-300 hover:-translate-y-1" style="filter: drop-shadow(2px 0 0 #2D3436) drop-shadow(-2px 0 0 #2D3436) drop-shadow(0 2px 0 #2D3436) drop-shadow(0 -2px 0 #2D3436) drop-shadow(4px 4px 0 #898D8D);">
+                            <div id="btn-funnel-bot" onclick="changeFunnel('bot')" class="h-16 bg-edwards-red flex items-center justify-center transition-all opacity-50 group-hover:opacity-100 group-hover:bg-red-600" style="clip-path: polygon(0 0, 100% 0, 85% 100%, 15% 100%);">
+                                <span class="font-bold hand-font text-white text-[15px] tracking-wider leading-tight text-center px-2">Therapy<br>Awareness</span>
+                            </div>
+                        </div>
+
+                        <!-- 可愛病患圖片 (極簡塗鴉風格，移除文字) -->
+                        <div class="mt-4 flex flex-col items-center justify-center relative z-10">
+                            <svg class="w-16 h-16 animate-doodle" viewBox="0 0 100 100" fill="none" stroke="#2D3436" stroke-width="4" stroke-linecap="round" stroke-linejoin="round" style="filter: drop-shadow(4px 4px 0 rgba(200,16,46,0.2));">
+                                <!-- 頭部 (不規則手繪感) -->
+                                <path d="M35 25 C 35 12, 65 12, 65 25 C 65 38, 35 38, 35 25 Z" fill="#FDFBF7" />
+                                <!-- 錯位線條增添手繪感 -->
+                                <path d="M38 28 C 38 15, 68 15, 68 28" stroke-width="1.5" opacity="0.4" />
+                                
+                                <!-- 身體 (幾何塗鴉) -->
+                                <path d="M40 37 L 25 85 L 75 85 L 60 37 Z" fill="#FDFBF7" />
+                                <path d="M43 39 L 28 87" stroke-width="1.5" opacity="0.4" />
+                                
+                                <!-- 舉起的雙手歡呼 -->
+                                <path d="M40 45 Q 25 35 20 20" />
+                                <path d="M60 45 Q 75 35 80 20" />
+                                
+                                <!-- 開心表情 -->
+                                <path d="M45 22 L 45 24 M 55 22 L 55 24" stroke-width="5" />
+                                <path d="M45 28 Q 50 32 55 28" stroke-width="3" />
+                                
+                                <!-- 胸前的健康愛心 (獨立跳動) -->
+                                <path d="M50 50 C 40 40, 30 50, 50 70 C 70 50, 60 40, 50 50 Z" stroke="#C8102E" fill="#C8102E" stroke-width="2" class="animate-pulse" />
+                            </svg>
                         </div>
                     </div>
-                    <div class="text-center text-[10px] text-edwards-gray font-bold mb-4">點擊上方漏斗階層查看細節</div>
+                    <div class="text-center text-[10px] text-edwards-gray font-bold mb-6">點擊上方漏斗階層查看細節</div>
 
                     <div id="funnel-details-box" class="p-4 border-2 rounded-xl shadow-[4px_4px_0_#C8102E] bg-red-50 border-edwards-red transform rotate-1 transition-all duration-300">
                         <h4 id="funnel-title" class="text-xl font-bold mb-3 border-b-2 border-dashed border-edwards-red pb-2 text-edwards-red transition-colors">❤️ 底層：治療決策 (Therapy Awareness)</h4>
@@ -387,12 +421,20 @@
                     <line x1="80%" y1="82%" x2="50%" y2="50%" />
                 </svg>
 
-                <a href="https://www.dontfearofsurgery.com/" target="_blank" class="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 z-20 bg-white border-4 border-edwards-ink rounded-[255px_15px_225px_15px/15px_225px_15px_255px] p-8 shadow-[6px_6px_0_#C8102E] flex flex-col items-center text-center w-72 hover:scale-105 transition-transform cursor-pointer">
-                    <i class="fa-solid fa-heart-pulse text-edwards-red text-5xl mb-3"></i>
-                    <h3 class="text-2xl font-bold text-edwards-ink mb-1 hand-font">Don't Fear</h3>
-                    <h3 class="text-2xl font-bold text-edwards-ink mb-3 hand-font">of Surgery</h3>
-                    <p class="font-bold text-lg mb-2 text-slate-800">瓣膜手術安心指南</p>
-                    <span class="text-sm font-bold hand-font transform -rotate-3 border-b-2 border-edwards-red text-edwards-red mt-2">了解越多，恐懼越少</span>
+                <a href="https://www.dontfearofsurgery.com/" target="_blank" class="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 z-20 bg-white p-4 pb-16 border-2 border-edwards-ink shadow-[8px_12px_0_rgba(45,52,54,0.15)] rounded-sm hover:-translate-y-3 hover:rotate-2 transition-all duration-300 w-[290px] group cursor-pointer">
+                    <!-- 頂部紙膠帶 -->
+                    <div class="absolute -top-3 left-1/2 transform -translate-x-1/2 w-20 h-7 bg-red-200/80 rotate-[-3deg] mix-blend-multiply border border-red-300/50 shadow-sm z-30"></div>
+                    <!-- 拍立得照片區塊 -->
+                    <div class="border-2 border-dashed border-slate-300 w-full h-[220px] overflow-hidden bg-slate-50 flex items-center justify-center p-3 relative">
+                        <img src="https://lh3.googleusercontent.com/d/10uheUSiUmB_s6EmigO2zektWFG55hn4M" alt="Don't Fear of Surgery 瓣膜手術安心指南" class="w-full h-full object-contain group-hover:scale-110 transition-transform duration-700" referrerpolicy="no-referrer">
+                    </div>
+                    <!-- 下方文字 -->
+                    <div class="absolute bottom-5 left-0 w-full flex flex-col items-center justify-center gap-1">
+                        <div class="flex items-center gap-2">
+                            <i class="fa-solid fa-heart-pulse text-edwards-red text-xl"></i>
+                            <span class="hand-font font-bold text-edwards-ink text-2xl tracking-wide">瓣膜手術安心指南</span>
+                        </div>
+                    </div>
                 </a>
 
                 <a href="https://www.dontfearofsurgery.com/event-page" target="_blank" class="absolute top-[30%] left-[20%] transform -translate-x-1/2 -translate-y-1/2 rotate-1 w-56 bg-white border-2 border-edwards-ink rounded-[15px_225px_15px_255px/255px_15px_225px_15px] p-5 shadow-[4px_4px_0_#898D8D] flex flex-col items-center text-center hover:scale-105 transition-transform z-10 cursor-pointer">
@@ -439,11 +481,20 @@
             </div>
 
             <div class="lg:hidden flex flex-col gap-6 items-center w-full mt-8">
-                <a href="https://www.dontfearofsurgery.com/" target="_blank" class="w-full max-w-sm bg-white border-4 border-edwards-ink rounded-[255px_15px_225px_15px/15px_225px_15px_255px] p-6 shadow-[6px_6px_0_#C8102E] flex flex-col items-center text-center mb-2 hover:-translate-y-1 transition-transform cursor-pointer">
-                    <i class="fa-solid fa-heart-pulse text-edwards-red text-4xl mb-3"></i>
-                    <h3 class="text-2xl font-bold text-edwards-ink mb-1 hand-font">Don't Fear of Surgery</h3>
-                    <p class="font-bold text-md mb-2 text-slate-800">瓣膜手術安心指南</p>
-                    <span class="text-sm font-bold hand-font text-edwards-red border-b border-edwards-red mt-2">了解越多，恐懼越少</span>
+                <a href="https://www.dontfearofsurgery.com/" target="_blank" class="relative bg-white p-4 pb-16 border-2 border-edwards-ink shadow-[6px_8px_0_rgba(45,52,54,0.15)] rounded-sm hover:-translate-y-2 transition-transform duration-300 w-[270px] group cursor-pointer mb-6 mx-auto block">
+                    <!-- 頂部紙膠帶 -->
+                    <div class="absolute -top-3 left-1/2 transform -translate-x-1/2 w-16 h-6 bg-red-200/80 rotate-[-2deg] mix-blend-multiply border border-red-300/50 shadow-sm z-30"></div>
+                    <!-- 拍立得照片區塊 -->
+                    <div class="border-2 border-dashed border-slate-300 w-full h-[200px] overflow-hidden bg-slate-50 flex items-center justify-center p-3">
+                        <img src="https://lh3.googleusercontent.com/d/10uheUSiUmB_s6EmigO2zektWFG55hn4M" alt="Don't Fear of Surgery 瓣膜手術安心指南" class="w-full h-full object-contain group-hover:scale-105 transition-transform duration-500" referrerpolicy="no-referrer">
+                    </div>
+                    <!-- 下方文字 -->
+                    <div class="absolute bottom-5 left-0 w-full flex flex-col items-center justify-center gap-1">
+                        <div class="flex items-center gap-2">
+                            <i class="fa-solid fa-heart-pulse text-edwards-red text-xl"></i>
+                            <span class="hand-font font-bold text-edwards-ink text-xl tracking-wide">瓣膜手術安心指南</span>
+                        </div>
+                    </div>
                 </a>
                 
                 <div class="grid grid-cols-2 gap-4 w-full">
@@ -501,10 +552,16 @@
                              <i class="fa-solid fa-baseball text-2xl text-edwards-red"></i>
                              <h3 class="font-bold text-xl">KOL 林岳平 (餅總)</h3>
                         </div>
-                        <p class="text-sm font-bold text-edwards-gray italic">「手術不是終點，而是起點」</p>
+                        <div class="mt-3 bg-red-50/80 border-l-4 border-edwards-red p-3 shadow-sm transform -rotate-1 w-fit rounded-r-lg">
+                            <p class="text-xl md:text-2xl font-black text-edwards-red hand-font tracking-wide flex items-center gap-2">
+                                <i class="fa-solid fa-quote-left text-edwards-red/30 text-lg"></i>
+                                手術不是終點，而是起點
+                                <i class="fa-solid fa-quote-right text-edwards-red/30 text-lg"></i>
+                            </p>
+                        </div>
                     </div>
                 </div>
-                <p class="text-sm font-medium border-l-4 border-edwards-red pl-3 text-slate-700 leading-relaxed relative z-10">
+                <p class="text-sm font-medium border-l-4 border-edwards-red pl-3 text-slate-700 leading-relaxed relative z-10 mt-3">
                     透過 2007 年與 2021 年兩次手術的生命實證，打破「術後體力不支」的刻板印象。將感性的「生命實證」強力消除病患恐懼。
                 </p>
             </div>
@@ -1038,9 +1095,13 @@
                 ['top', 'mid', 'bot'].forEach(l => {
                     const btn = document.getElementById(`btn-funnel-${l}`);
                     if (btn) {
-                        btn.style.opacity = l === level ? '1' : '0.4';
-                        btn.classList.toggle('shadow-md', l === level);
-                        btn.classList.toggle('scale-105', l === level);
+                        if (l === level) {
+                            btn.classList.remove('opacity-50');
+                            btn.classList.add('opacity-100');
+                        } else {
+                            btn.classList.remove('opacity-100');
+                            btn.classList.add('opacity-50');
+                        }
                     }
                 });
             }
