@@ -155,6 +155,12 @@
             transform: translate(2px, 2px);
             box-shadow: 1px 1px 0 #2D3436;
         }
+        
+        /* 輪播點點動畫過渡 */
+        .slider-dot.active {
+            background-color: #C8102E;
+            transform: scale(1.25);
+        }
     </style>
 </head>
 <body class="antialiased font-sans overflow-x-hidden">
@@ -165,7 +171,7 @@
             <i class="fa-solid fa-chevron-left text-edwards-red mb-3 group-hover:rotate-180 transition-transform duration-500"></i>
             <span style="writing-mode: vertical-rl; letter-spacing: 0.15em;" class="font-bold text-edwards-ink text-[13px] tracking-widest">目錄導覽</span>
         </div>
-        <div class="w-52 p-5 bg-white border-y-2 border-l-2 border-edwards-ink rounded-l-[15px_225px_15px_225px/255px_15px_225px_15px] shadow-[-4px_4px_0_#2D3436]">
+        <div class="w-56 p-5 bg-white border-y-2 border-l-2 border-edwards-ink rounded-l-[15px_225px_15px_225px/255px_15px_225px_15px] shadow-[-4px_4px_0_#2D3436]">
             <div class="text-lg font-bold text-edwards-ink mb-3 border-b-2 border-dashed border-slate-300 pb-2 hand-font flex items-center justify-center gap-2">
                 <i class="fa-solid fa-map-location-dot text-edwards-red"></i> 快速跳轉
             </div>
@@ -179,8 +185,10 @@
                 <li><a href="#sec-7" class="toc-link block text-[13px] font-bold text-slate-500 hover:text-edwards-red transition-all pl-2 border-l-4 border-transparent hover:border-edwards-red" data-target="sec-7">七、平台曝光總和</a></li>
                 <li><a href="#sec-8" class="toc-link block text-[13px] font-bold text-slate-500 hover:text-edwards-red transition-all pl-2 border-l-4 border-transparent hover:border-edwards-red" data-target="sec-8">八、線下整合深耕</a></li>
                 <li><a href="#sec-9" class="toc-link block text-[13px] font-bold text-slate-500 hover:text-edwards-red transition-all pl-2 border-l-4 border-transparent hover:border-edwards-red" data-target="sec-9">九、後續與戰略協作</a></li>
-                <li><a href="#sec-11" class="toc-link block text-[13px] font-bold text-slate-500 hover:text-edwards-red transition-all pl-2 border-l-4 border-transparent hover:border-edwards-red" data-target="sec-11">十一、結語</a></li>
-                <li><a href="./game.html" class="block text-[13px] font-bold text-edwards-red mt-2 transition-all pl-2 border-l-4 border-transparent hover:border-edwards-red bg-red-50 p-1 rounded"><i class="fa-solid fa-gamepad mr-1"></i>十二、互動挑戰</a></li>
+                <!-- 更新後的目錄編號 -->
+                <li><a href="#sec-11" class="toc-link block text-[13px] font-bold text-slate-500 hover:text-edwards-red transition-all pl-2 border-l-4 border-transparent hover:border-edwards-red" data-target="sec-11">十一、幕後花絮歷險</a></li>
+                <li><a href="#sec-12" class="toc-link block text-[13px] font-bold text-slate-500 hover:text-edwards-red transition-all pl-2 border-l-4 border-transparent hover:border-edwards-red" data-target="sec-12">十二、結語</a></li>
+                <li><a href="./game.html" class="block text-[13px] font-bold text-edwards-red mt-2 transition-all pl-2 border-l-4 border-transparent hover:border-edwards-red bg-red-50 p-1 rounded"><i class="fa-solid fa-gamepad mr-1"></i>十三、互動挑戰</a></li>
             </ul>
         </div>
     </nav>
@@ -209,8 +217,9 @@
                 <li><a href="#sec-7" class="block font-bold text-slate-600 active:text-edwards-red bg-white p-3 rounded-xl border-2 border-slate-200">七、平台曝光總和</a></li>
                 <li><a href="#sec-8" class="block font-bold text-slate-600 active:text-edwards-red bg-white p-3 rounded-xl border-2 border-slate-200">八、線下整合深耕</a></li>
                 <li><a href="#sec-9" class="block font-bold text-slate-600 active:text-edwards-red bg-white p-3 rounded-xl border-2 border-slate-200">九、後續與戰略協作</a></li>
-                <li><a href="#sec-11" class="block font-bold text-slate-600 active:text-edwards-red bg-white p-3 rounded-xl border-2 border-slate-200">十一、結語</a></li>
-                <li><a href="./game.html" class="block font-bold text-edwards-red active:text-edwards-red bg-red-50 p-3 rounded-xl border-2 border-edwards-red"><i class="fa-solid fa-gamepad mr-2"></i>十二、互動挑戰：全球保衛戰</a></li>
+                <li><a href="#sec-11" class="block font-bold text-slate-600 active:text-edwards-red bg-white p-3 rounded-xl border-2 border-slate-200">十一、幕後花絮歷險</a></li>
+                <li><a href="#sec-12" class="block font-bold text-slate-600 active:text-edwards-red bg-white p-3 rounded-xl border-2 border-slate-200">十二、結語</a></li>
+                <li><a href="./game.html" class="block font-bold text-edwards-red active:text-edwards-red bg-red-50 p-3 rounded-xl border-2 border-edwards-red"><i class="fa-solid fa-gamepad mr-2"></i>十三、互動挑戰：全球保衛戰</a></li>
             </ul>
         </div>
     </div>
@@ -953,7 +962,7 @@
             </div>
         </section>
 
-        <!-- 第八、九、十、十一 段：線下與結語 -->
+        <!-- 第八段：線下整合與診間深耕 -->
         <section id="sec-8" class="pt-8 scroll-mt-24 reveal-section relative z-10">
             <h2 class="text-2xl font-bold mb-6 sketch-underline inline-block text-edwards-ink">八、線下整合與診間深耕 (Offline Integration)</h2>
             <p class="mb-6 text-base font-medium text-slate-600">同步強化實體院所的「最後一步」觸及，在病患最焦慮的決策點（醫院場域）發酵。</p>
@@ -986,24 +995,74 @@
             </div>
         </section>
 
-        <section id="sec-9" class="pt-8 space-y-12 scroll-mt-24 reveal-section relative z-10">
-            <div>
-                <h2 class="text-2xl font-bold mb-5 sketch-underline inline-block text-edwards-ink">九、專案後續規劃</h2>
-                <p class="text-base leading-relaxed font-medium text-slate-700 bg-white p-6 border-2 border-edwards-ink rounded-[255px_15px_225px_15px/15px_225px_15px_255px] shadow-[4px_4px_0_#898D8D] transform -rotate-1">
-                    我們將持續製作像醫師衛教影片、專訪文章等素材，未來將陸續置入官網裡，讓平台內容更加豐富，並定期追蹤這些發布刊物為網站帶來的瀏覽成效。
-                </p>
-            </div>
-            
-            <div>
-                <h2 class="text-2xl font-bold mb-5 sketch-underline inline-block text-edwards-red">十、戰略協作 (Sales Synergy)</h2>
-                <p class="text-base leading-relaxed font-medium text-edwards-ink bg-red-50 p-6 border-2 border-edwards-red rounded-[15px_255px_15px_225px/225px_15px_255px_15px] shadow-[4px_4px_0_#C8102E] transform rotate-1">
-                    第一線業務同仁已在醫師端建立深厚產品信任。本專案旨在減少病患端的「決策心理」瓶頸，作為業務同仁<strong class="text-edwards-red text-lg mx-1 hand-font bg-white px-2 border border-edwards-red rounded shadow-sm">最強大的攻堅武器</strong>。業務端鞏固醫師，專案端優化病患，共同拯救更多生命。
-                </p>
+        <!-- 第九段：專案後續規劃 -->
+        <section id="sec-9" class="pt-8 scroll-mt-24 reveal-section relative z-10">
+            <h2 class="text-2xl font-bold mb-5 sketch-underline inline-block text-edwards-ink">九、專案後續規劃</h2>
+            <p class="text-base leading-relaxed font-medium text-slate-700 bg-white p-6 border-2 border-edwards-ink rounded-[255px_15px_225px_15px/15px_225px_15px_255px] shadow-[4px_4px_0_#898D8D] transform -rotate-1">
+                我們將持續製作像醫師衛教影片、專訪文章等素材，未來將陸續置入官網裡，讓平台內容更加豐富，並定期追蹤這些發布刊物為網站帶來的瀏覽成效。
+            </p>
+        </section>
+        
+        <!-- 第十段：戰略協作 -->
+        <section id="sec-10" class="pt-8 scroll-mt-24 reveal-section relative z-10">
+            <h2 class="text-2xl font-bold mb-5 sketch-underline inline-block text-edwards-red">十、戰略協作 (Sales Synergy)</h2>
+            <p class="text-base leading-relaxed font-medium text-edwards-ink bg-red-50 p-6 border-2 border-edwards-red rounded-[15px_255px_15px_225px/225px_15px_255px_15px] shadow-[4px_4px_0_#C8102E] transform rotate-1">
+                第一線業務同仁已在醫師端建立深厚產品信任。本專案旨在減少病患端的「決策心理」瓶頸，作為業務同仁<strong class="text-edwards-red text-lg mx-1 hand-font bg-white px-2 border border-edwards-red rounded shadow-sm">最強大的攻堅武器</strong>。業務端鞏固醫師，專案端優化病患，共同拯救更多生命。
+            </p>
+        </section>
+
+        <!-- ================= 第十一段：新增的滑動圖片區塊 ================= -->
+        <section id="sec-11" class="pt-16 pb-8 scroll-mt-24 reveal-section relative z-10">
+            <h2 class="text-3xl font-bold mb-6 sketch-underline inline-block text-edwards-ink hand-font"><i class="fa-solid fa-masks-theater text-edwards-red mr-2"></i>十一、幕後花絮：專案歷險記</h2>
+            <p class="mb-8 font-medium text-lg text-slate-700 leading-relaxed border-l-4 border-edwards-red pl-4">
+                每一個光鮮亮麗的數據背後，都是無數次卡關與神隊友的救援。用這組塗鴉漫畫，記錄我們從一開始的「無助」到最終「成功上線」的血淚旅程，感謝所有幫助過這個專案的夥伴們！
+            </p>
+
+            <div class="relative w-full max-w-4xl mx-auto sketch-box p-3 md:p-5 bg-slate-50 transform rotate-1">
+                <!-- 裝飾紙膠帶 -->
+                <div class="absolute -top-3 left-8 w-16 h-6 bg-red-200/80 rotate-[-4deg] mix-blend-multiply border border-red-300/50 shadow-sm z-30"></div>
+                
+                <!-- 輪播容器 -->
+                <div id="slider-container" class="flex overflow-x-auto snap-x snap-mandatory no-scrollbar scroll-smooth w-full rounded-lg border-2 border-edwards-ink bg-white shadow-inner">
+                    <!-- Slide 1: 剛接到專案 -->
+                    <div class="w-full shrink-0 snap-center p-4 md:p-8 flex items-center justify-center h-[300px] sm:h-[400px] md:h-[500px]">
+                        <img src="https://lh3.googleusercontent.com/d/11kRZuGMH-pIXwS0wUXD1e0G1YK1GfNm4" referrerpolicy="no-referrer" class="max-w-full max-h-full rounded-xl border-2 border-edwards-ink shadow-[4px_4px_0_#898D8D] object-contain" alt="剛接到專案的無助與跨部門協助">
+                    </div>
+                    <!-- Slide 2: 衛教內容把關 -->
+                    <div class="w-full shrink-0 snap-center p-4 md:p-8 flex items-center justify-center h-[300px] sm:h-[400px] md:h-[500px]">
+                        <img src="https://lh3.googleusercontent.com/d/1ETTvxWHKnkPLzqCGBqq8A_yX6QiXga6q" referrerpolicy="no-referrer" class="max-w-full max-h-full rounded-xl border-2 border-edwards-ink shadow-[4px_4px_0_#898D8D] object-contain" alt="衛教網站絕對正確的考驗">
+                    </div>
+                    <!-- Slide 3: 製作Patient Video -->
+                    <div class="w-full shrink-0 snap-center p-4 md:p-8 flex items-center justify-center h-[300px] sm:h-[400px] md:h-[500px]">
+                        <img src="https://lh3.googleusercontent.com/d/1IMOp_0Lds9pC0CnYsgiZ8n5Ik2G-p_Rd" referrerpolicy="no-referrer" class="max-w-full max-h-full rounded-xl border-2 border-edwards-ink shadow-[4px_4px_0_#898D8D] object-contain" alt="製作Patient Video魔王關">
+                    </div>
+                    <!-- Slide 4: 廣告大考驗與成功 -->
+                    <div class="w-full shrink-0 snap-center p-4 md:p-8 flex items-center justify-center h-[300px] sm:h-[400px] md:h-[500px]">
+                        <img src="https://lh3.googleusercontent.com/d/1ke6wvBgLmzgrASXq9tgf2txVjItLb3Xl" referrerpolicy="no-referrer" class="max-w-full max-h-full rounded-xl border-2 border-edwards-ink shadow-[4px_4px_0_#898D8D] object-contain" alt="社群推廣與廣告大考驗最終成功">
+                    </div>
+                </div>
+
+                <!-- 左右控制按鈕 -->
+                <button onclick="scrollSlider(-1)" class="absolute left-0 top-1/2 -translate-y-1/2 -translate-x-3 md:-translate-x-6 w-10 h-10 md:w-12 md:h-12 bg-white border-2 border-edwards-ink rounded-full flex items-center justify-center text-edwards-red hover:scale-110 hover:bg-red-50 transition-all shadow-[3px_3px_0_#2D3436] z-10 focus:outline-none">
+                    <i class="fa-solid fa-chevron-left"></i>
+                </button>
+                <button onclick="scrollSlider(1)" class="absolute right-0 top-1/2 -translate-y-1/2 translate-x-3 md:translate-x-6 w-10 h-10 md:w-12 md:h-12 bg-white border-2 border-edwards-ink rounded-full flex items-center justify-center text-edwards-red hover:scale-110 hover:bg-red-50 transition-all shadow-[3px_3px_0_#2D3436] z-10 focus:outline-none">
+                    <i class="fa-solid fa-chevron-right"></i>
+                </button>
+
+                <!-- 點點指示器 -->
+                <div class="flex justify-center gap-3 mt-5" id="slider-dots">
+                    <button onclick="scrollToSlide(0)" class="w-3.5 h-3.5 rounded-full border-2 border-edwards-ink bg-edwards-red transition-all slider-dot active"></button>
+                    <button onclick="scrollToSlide(1)" class="w-3.5 h-3.5 rounded-full border-2 border-edwards-ink bg-white transition-all slider-dot"></button>
+                    <button onclick="scrollToSlide(2)" class="w-3.5 h-3.5 rounded-full border-2 border-edwards-ink bg-white transition-all slider-dot"></button>
+                    <button onclick="scrollToSlide(3)" class="w-3.5 h-3.5 rounded-full border-2 border-edwards-ink bg-white transition-all slider-dot"></button>
+                </div>
             </div>
         </section>
 
-        <section id="sec-11" class="text-center pt-16 pb-10 scroll-mt-24 reveal-section relative z-10">
-            <h2 class="text-3xl font-bold mb-6 hand-font text-edwards-ink inline-block border-b-4 border-edwards-red pb-2">十一、結語 (Conclusion)</h2>
+        <!-- 第十二段：結語 -->
+        <section id="sec-12" class="text-center pt-16 pb-10 scroll-mt-24 reveal-section relative z-10">
+            <h2 class="text-3xl font-bold mb-6 hand-font text-edwards-ink inline-block border-b-4 border-edwards-red pb-2">十二、結語 (Conclusion)</h2>
             <p class="text-lg md:text-xl text-edwards-ink font-bold mx-auto leading-relaxed max-w-4xl text-justify md:text-center mt-4">
                 這不僅是一次跨部門的突破，更是 SURG 長遠發展藍圖中的第一步。未來期待藉由專案持續發酵，聽到更多醫師正面回饋，並進一步帶動臨床上更明確的<strong class="text-edwards-red underline decoration-wavy underline-offset-4">產品指定使用率 (Brand Preference / Request)</strong>，在拯救生命的同時，創造無可取代的商業增長動能。
             </p>
@@ -1017,10 +1076,10 @@
             </div>
         </section>
 
-        <!-- ================= 第十二段：互動挑戰遊戲引導 ================= -->
+        <!-- ================= 第十三段：互動挑戰遊戲引導 ================= -->
         <section id="sec-game-promo" class="pt-16 pb-10 scroll-mt-24 relative z-10 border-t-4 border-dashed border-slate-300 mt-10 text-center flex flex-col items-center">
             <h2 class="text-4xl font-bold mb-8 hand-font text-edwards-ink inline-block">
-                <i class="fa-solid fa-gamepad text-edwards-red mr-2"></i>十二、互動挑戰
+                <i class="fa-solid fa-gamepad text-edwards-red mr-2"></i>十三、互動挑戰
             </h2>
             
             <a href="./game.html" class="sketch-btn text-2xl py-4 px-8 animate-bounce inline-flex">
@@ -1123,8 +1182,39 @@
             }
         }
 
+        // --- 圖片輪播 (Slider) 邏輯 ---
+        function scrollSlider(direction) {
+            const container = document.getElementById('slider-container');
+            const scrollAmount = container.clientWidth;
+            container.scrollBy({ left: direction * scrollAmount, behavior: 'smooth' });
+        }
+
+        function scrollToSlide(index) {
+            const container = document.getElementById('slider-container');
+            const scrollAmount = container.clientWidth;
+            container.scrollTo({ left: index * scrollAmount, behavior: 'smooth' });
+        }
+
         document.addEventListener('DOMContentLoaded', () => {
             if (document.getElementById('btn-funnel-top')) changeFunnel('top');
+
+            // 輪播點點指示器同步
+            const sliderContainer = document.getElementById('slider-container');
+            if (sliderContainer) {
+                sliderContainer.addEventListener('scroll', () => {
+                    const index = Math.round(sliderContainer.scrollLeft / sliderContainer.clientWidth);
+                    const dots = document.querySelectorAll('.slider-dot');
+                    dots.forEach((dot, i) => {
+                        if (i === index) {
+                            dot.classList.add('active', 'bg-edwards-red');
+                            dot.classList.remove('bg-white');
+                        } else {
+                            dot.classList.remove('active', 'bg-edwards-red');
+                            dot.classList.add('bg-white');
+                        }
+                    });
+                });
+            }
 
             const backToTopBtn = document.getElementById('back-to-top');
             window.addEventListener('scroll', () => {
