@@ -15,24 +15,28 @@
     <link href="https://fonts.googleapis.com/css2?family=Kalam:wght@400;700&family=Noto+Sans+TC:wght@400;700;900&display=swap" rel="stylesheet">
     
     <script>
-        tailwind.config = {
-            theme: {
-                extend: {
-                    colors: {
-                        edwards: {
-                            red: '#C8102E',    
-                            gray: '#898D8D',   
-                            ink: '#2D3436',    
-                            paper: '#FDFBF7'   
+        document.addEventListener('DOMContentLoaded', () => {
+            if (typeof tailwind !== 'undefined') {
+                tailwind.config = {
+                    theme: {
+                        extend: {
+                            colors: {
+                                edwards: {
+                                    red: '#C8102E',    
+                                    gray: '#898D8D',   
+                                    ink: '#2D3436',    
+                                    paper: '#FDFBF7'   
+                                }
+                            },
+                            fontFamily: {
+                                sans: ['Noto Sans TC', 'sans-serif'],
+                                hand: ['Kalam', 'Noto Sans TC', 'cursive'],
+                            }
                         }
-                    },
-                    fontFamily: {
-                        sans: ['Noto Sans TC', 'sans-serif'],
-                        hand: ['Kalam', 'Noto Sans TC', 'cursive'],
                     }
-                }
+                };
             }
-        }
+        });
     </script>
     
     <style>
@@ -185,7 +189,6 @@
                 <li><a href="#sec-7" class="toc-link block text-[13px] font-bold text-slate-500 hover:text-edwards-red transition-all pl-2 border-l-4 border-transparent hover:border-edwards-red" data-target="sec-7">七、平台曝光總和</a></li>
                 <li><a href="#sec-8" class="toc-link block text-[13px] font-bold text-slate-500 hover:text-edwards-red transition-all pl-2 border-l-4 border-transparent hover:border-edwards-red" data-target="sec-8">八、線下整合深耕</a></li>
                 <li><a href="#sec-9" class="toc-link block text-[13px] font-bold text-slate-500 hover:text-edwards-red transition-all pl-2 border-l-4 border-transparent hover:border-edwards-red" data-target="sec-9">九、後續與戰略協作</a></li>
-                <!-- 更新後的目錄編號 -->
                 <li><a href="#sec-11" class="toc-link block text-[13px] font-bold text-slate-500 hover:text-edwards-red transition-all pl-2 border-l-4 border-transparent hover:border-edwards-red" data-target="sec-11">十一、幕後花絮歷險</a></li>
                 <li><a href="#sec-12" class="toc-link block text-[13px] font-bold text-slate-500 hover:text-edwards-red transition-all pl-2 border-l-4 border-transparent hover:border-edwards-red" data-target="sec-12">十二、結語</a></li>
                 <li><a href="./game.html" class="block text-[13px] font-bold text-edwards-red mt-2 transition-all pl-2 border-l-4 border-transparent hover:border-edwards-red bg-red-50 p-1 rounded"><i class="fa-solid fa-gamepad mr-1"></i>十三、互動挑戰</a></li>
@@ -818,58 +821,57 @@
                         </a>
                     </div>
                 </div>
-
-                <!-- 5.4 -->
-                <div class="sketch-box shadow-[4px_4px_0_#898D8D]">
-                    <h3 class="text-xl font-bold mb-6 border-b-2 border-edwards-ink pb-2"><i class="fa-solid fa-share-nodes mr-2 text-edwards-red"></i>5.4 社群論壇討論與擴散</h3>
-                    
-                    <a href="https://www.ptt.cc/bbs/Baseball/M.1776136728.A.578.html" target="_blank" class="block border-2 border-edwards-ink rounded-xl p-3 bg-slate-900 text-white hover:bg-slate-800 transition-colors mb-4 relative overflow-hidden group">
-                        <div class="absolute inset-0 bg-[url('data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSI0IiBoZWlnaHQ9IjQiPjxyZWN0IHdpZHRoPSI0IiBoZWlnaHQ9IjQiIGZpbGw9IiNmZmYiIGZpbGwtb3BhY2l0eT0iMC4wNSIvPjwvc3ZnPg==')] opacity-50"></div>
-                        <div class="flex items-center gap-2 relative z-10">
-                            <div class="bg-blue-600 text-white text-[10px] px-1.5 py-0.5 rounded-sm font-bold border border-blue-400">爆</div>
-                            <span class="text-sm font-bold text-cyan-400 group-hover:text-cyan-300 transition-colors">[討論] PTT 棒球板討論串</span>
-                            <i class="fa-solid fa-terminal ml-auto text-slate-500"></i>
-                        </div>
-                    </a>
-
-                    <!-- 改為 4 欄並排以適應全寬版面 -->
-                    <div class="grid grid-cols-2 lg:grid-cols-4 gap-3">
-                        <a href="https://www.threads.com/@pslienhsiaowei/post/DXGlHXViX0P" target="_blank" class="border-2 border-slate-300 hover:border-black rounded-2xl p-3 bg-white hover:-translate-y-1 transition-all flex flex-col gap-1 shadow-sm">
-                            <div class="flex justify-between items-center">
-                                <i class="fa-brands fa-threads text-xl text-black"></i>
-                                <span class="text-[10px] text-slate-400 font-medium">@pslien...</span>
-                            </div>
-                            <div class="text-xs font-bold mt-1 text-edwards-ink">Threads 討論串 1</div>
-                        </a>
-                        <a href="https://www.threads.com/@tainanhitsuji/post/DXHTi-dmQX3" target="_blank" class="border-2 border-slate-300 hover:border-black rounded-2xl p-3 bg-white hover:-translate-y-1 transition-all flex flex-col gap-1 shadow-sm">
-                            <div class="flex justify-between items-center">
-                                <i class="fa-brands fa-threads text-xl text-black"></i>
-                                <span class="text-[10px] text-slate-400 font-medium">@tainan...</span>
-                            </div>
-                            <div class="text-xs font-bold mt-1 text-edwards-ink">Threads 討論串 2</div>
-                        </a>
-                        <a href="https://www.threads.com/@kobanachiang/post/DXG5_PaAae6" target="_blank" class="border-2 border-slate-300 hover:border-black rounded-2xl p-3 bg-white hover:-translate-y-1 transition-all flex flex-col gap-1 shadow-sm">
-                            <div class="flex justify-between items-center">
-                                <i class="fa-brands fa-threads text-xl text-black"></i>
-                                <span class="text-[10px] text-slate-400 font-medium">@kobana...</span>
-                            </div>
-                            <div class="text-xs font-bold mt-1 text-edwards-ink">Threads 討論串 3</div>
-                        </a>
-                        <a href="https://www.threads.com/@steffi_hung/post/DXGnFhtjt15" target="_blank" class="border-2 border-slate-300 hover:border-black rounded-2xl p-3 bg-white hover:-translate-y-1 transition-all flex flex-col gap-1 shadow-sm">
-                            <div class="flex justify-between items-center">
-                                <i class="fa-brands fa-threads text-xl text-black"></i>
-                                <span class="text-[10px] text-slate-400 font-medium">@steffi...</span>
-                            </div>
-                            <div class="text-xs font-bold mt-1 text-edwards-ink">Threads 討論串 4</div>
-                        </a>
-                    </div>
-                </div>
             </div>
         </section>
 
         <!-- 第六段：社群分析 -->
         <section id="sec-6" class="pt-6 scroll-mt-24 reveal-section relative z-10">
             <h2 class="text-2xl font-bold mb-8 sketch-underline inline-block text-edwards-ink">六、民眾自發性討論與社群共鳴分析</h2>
+            
+            <div class="sketch-box shadow-[4px_4px_0_#898D8D] mb-10">
+                <h3 class="text-xl font-bold mb-6 border-b-2 border-edwards-ink pb-2"><i class="fa-solid fa-share-nodes mr-2 text-edwards-red"></i>社群論壇討論與擴散</h3>
+                
+                <a href="https://www.ptt.cc/bbs/Baseball/M.1776136728.A.578.html" target="_blank" class="block border-2 border-edwards-ink rounded-xl p-3 bg-slate-900 text-white hover:bg-slate-800 transition-colors mb-4 relative overflow-hidden group">
+                    <div class="absolute inset-0 bg-[url('data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSI0IiBoZWlnaHQ9IjQiPjxyZWN0IHdpZHRoPSI0IiBoZWlnaHQ9IjQiIGZpbGw9IiNmZmYiIGZpbGwtb3BhY2l0eT0iMC4wNSIvPjwvc3ZnPg==')] opacity-50"></div>
+                    <div class="flex items-center gap-2 relative z-10">
+                        <div class="bg-blue-600 text-white text-[10px] px-1.5 py-0.5 rounded-sm font-bold border border-blue-400">爆</div>
+                        <span class="text-sm font-bold text-cyan-400 group-hover:text-cyan-300 transition-colors">[討論] PTT 棒球板討論串</span>
+                        <i class="fa-solid fa-terminal ml-auto text-slate-500"></i>
+                    </div>
+                </a>
+
+                <!-- 改為 4 欄並排以適應全寬版面 -->
+                <div class="grid grid-cols-2 lg:grid-cols-4 gap-3">
+                    <a href="https://www.threads.com/@pslienhsiaowei/post/DXGlHXViX0P" target="_blank" class="border-2 border-slate-300 hover:border-black rounded-2xl p-3 bg-white hover:-translate-y-1 transition-all flex flex-col gap-1 shadow-sm">
+                        <div class="flex justify-between items-center">
+                            <i class="fa-brands fa-threads text-xl text-black"></i>
+                            <span class="text-[10px] text-slate-400 font-medium">@pslien...</span>
+                        </div>
+                        <div class="text-xs font-bold mt-1 text-edwards-ink">Threads 討論串 1</div>
+                    </a>
+                    <a href="https://www.threads.com/@tainanhitsuji/post/DXHTi-dmQX3" target="_blank" class="border-2 border-slate-300 hover:border-black rounded-2xl p-3 bg-white hover:-translate-y-1 transition-all flex flex-col gap-1 shadow-sm">
+                        <div class="flex justify-between items-center">
+                            <i class="fa-brands fa-threads text-xl text-black"></i>
+                            <span class="text-[10px] text-slate-400 font-medium">@tainan...</span>
+                        </div>
+                        <div class="text-xs font-bold mt-1 text-edwards-ink">Threads 討論串 2</div>
+                    </a>
+                    <a href="https://www.threads.com/@kobanachiang/post/DXG5_PaAae6" target="_blank" class="border-2 border-slate-300 hover:border-black rounded-2xl p-3 bg-white hover:-translate-y-1 transition-all flex flex-col gap-1 shadow-sm">
+                        <div class="flex justify-between items-center">
+                            <i class="fa-brands fa-threads text-xl text-black"></i>
+                            <span class="text-[10px] text-slate-400 font-medium">@kobana...</span>
+                        </div>
+                        <div class="text-xs font-bold mt-1 text-edwards-ink">Threads 討論串 3</div>
+                    </a>
+                    <a href="https://www.threads.com/@steffi_hung/post/DXGnFhtjt15" target="_blank" class="border-2 border-slate-300 hover:border-black rounded-2xl p-3 bg-white hover:-translate-y-1 transition-all flex flex-col gap-1 shadow-sm">
+                        <div class="flex justify-between items-center">
+                            <i class="fa-brands fa-threads text-xl text-black"></i>
+                            <span class="text-[10px] text-slate-400 font-medium">@steffi...</span>
+                        </div>
+                        <div class="text-xs font-bold mt-1 text-edwards-ink">Threads 討論串 4</div>
+                    </a>
+                </div>
+            </div>
             
             <div class="grid grid-cols-1 md:grid-cols-2 gap-10 items-center">
                 <div class="grid grid-cols-1 gap-5">
@@ -1028,13 +1030,13 @@
                     <div class="w-full shrink-0 snap-center p-4 md:p-8 flex items-center justify-center h-[300px] sm:h-[400px] md:h-[500px]">
                         <img src="https://lh3.googleusercontent.com/d/11kRZuGMH-pIXwS0wUXD1e0G1YK1GfNm4" referrerpolicy="no-referrer" class="max-w-full max-h-full rounded-xl border-2 border-edwards-ink shadow-[4px_4px_0_#898D8D] object-contain" alt="剛接到專案的無助與跨部門協助">
                     </div>
-                    <!-- Slide 2: 衛教內容把關 -->
-                    <div class="w-full shrink-0 snap-center p-4 md:p-8 flex items-center justify-center h-[300px] sm:h-[400px] md:h-[500px]">
-                        <img src="https://lh3.googleusercontent.com/d/1ETTvxWHKnkPLzqCGBqq8A_yX6QiXga6q" referrerpolicy="no-referrer" class="max-w-full max-h-full rounded-xl border-2 border-edwards-ink shadow-[4px_4px_0_#898D8D] object-contain" alt="衛教網站絕對正確的考驗">
-                    </div>
-                    <!-- Slide 3: 製作Patient Video -->
+                    <!-- Slide 2: 製作Patient Video (原 Slide 3) -->
                     <div class="w-full shrink-0 snap-center p-4 md:p-8 flex items-center justify-center h-[300px] sm:h-[400px] md:h-[500px]">
                         <img src="https://lh3.googleusercontent.com/d/1IMOp_0Lds9pC0CnYsgiZ8n5Ik2G-p_Rd" referrerpolicy="no-referrer" class="max-w-full max-h-full rounded-xl border-2 border-edwards-ink shadow-[4px_4px_0_#898D8D] object-contain" alt="製作Patient Video魔王關">
+                    </div>
+                    <!-- Slide 3: 衛教內容把關 (原 Slide 2) -->
+                    <div class="w-full shrink-0 snap-center p-4 md:p-8 flex items-center justify-center h-[300px] sm:h-[400px] md:h-[500px]">
+                        <img src="https://lh3.googleusercontent.com/d/1ETTvxWHKnkPLzqCGBqq8A_yX6QiXga6q" referrerpolicy="no-referrer" class="max-w-full max-h-full rounded-xl border-2 border-edwards-ink shadow-[4px_4px_0_#898D8D] object-contain" alt="衛教網站絕對正確的考驗">
                     </div>
                     <!-- Slide 4: 廣告大考驗與成功 -->
                     <div class="w-full shrink-0 snap-center p-4 md:p-8 flex items-center justify-center h-[300px] sm:h-[400px] md:h-[500px]">
